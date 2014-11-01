@@ -1,0 +1,22 @@
+# C++ Compiler Files #
+*.o
+*~
+
+# Game generated files #
+DG_Spotlight/Build/*.exe
+
+# Visual Studio Garbage #
+*.ipch
+*.tlog
+*.sdf
+*.opensdf
+*.obj
+*.log
+*.suo
+*.idb
+*.pdb
+*.ilk
+*.lastbuildstate
+*.intermediate.manifest
+*.cache
+*.unsuccessfulbuild
