@@ -1,8 +1,10 @@
 #include "GLHandler.h"
 
-GLHandler::GLHandler(){}
+GLHandler::GLHandler(){
+	program = 0;
+}
 GLHandler::~GLHandler(){
-	glDeleteProgram(program);
+	//std::cout << "TODO We should not see this\n";
 }
 
 /**
@@ -55,6 +57,7 @@ int GLHandler::load(){
 
 	// Make shader program
 	program = glCreateProgram();
+	std::cout << "Shader program: " << program << "\n";
 	// Give the vertex shader to our shader program
 	glAttachShader(program, vs);
 	// Give the fragment shader to out shader program 
@@ -146,14 +149,14 @@ int GLHandler::load(){
 
 // Delete MGL shader 
 void GLHandler::deleteShader(){
-	if (program != -1){
+	if (program != 0){
 		glUseProgram(0);
 		glDetachShader(program, vs);
 		glDeleteShader(vs);
 		glDetachShader(program, fs);
 		glDeleteShader(fs);
 		glDeleteProgram(program);
-		program = -1;
+		program = 0;
 	}
 }
 

@@ -10,10 +10,10 @@ CC = g++
 CFLAGS = -Wall -g
 
 # define any directories containing header files other than /usr/include
-INCLUDES = -I ./include
+INCLUDES = -I ../include
 
 # define library paths in addition to /usr/lib
-LFLAGS = -L ./lib
+LFLAGS = -L ../lib
 
 # define any libraries to link into executable:
 LIBS = -lSOIL -lGLEW -lSDL2 -lGL 

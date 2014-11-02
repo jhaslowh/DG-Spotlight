@@ -66,6 +66,8 @@ void free_resources()
 	glUseProgram(0);
 	// Disable gl states 
 	mgl.endGL();
+	// Delete gl shader 
+	mgl.deleteShader();
 
 	printf("Resources Freed\n");
 }

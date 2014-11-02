@@ -164,7 +164,7 @@ void Plane::draw(GLHandler mgl){
 		glUniform1i(mgl.mUseTexture, 0);
 
 	// Draw the sent indicies 
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, indicies);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indicies);
 
 	// Disable vertexes 
 	glDisableVertexAttribArray(mgl.mPositionHandle);

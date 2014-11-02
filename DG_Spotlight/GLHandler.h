@@ -21,7 +21,7 @@ class GLHandler
 public:
 	// Shader handles 
 	GLuint vs, fs;
-	GLuint program = -1;
+	GLuint program;
 	GLint mPositionHandle;			// Position
 	GLint mTextCordHandle;			// Texture UV's
 	GLint mProjMatrixHandle;		// Projection Matrix
