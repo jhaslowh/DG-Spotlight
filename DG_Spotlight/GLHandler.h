@@ -60,6 +60,11 @@ public:
 	// Call to load 
 	int load();
 
+	// Grab uniform handle 
+	void grabHandleUni(int& handle, const GLchar* name);
+	// Grab attribute handle 
+	void grabHandleAtt(int& handle, const GLchar* name);
+
 	// Delete MGL shader 
 	void deleteShader();
 

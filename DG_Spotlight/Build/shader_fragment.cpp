@@ -15,7 +15,7 @@ varying vec3 vLightDirec;     // Light direction vector
 uniform vec3 spotlightDirection; // Direction of spotlight
 uniform float spotlightCosCutoff;// Cutoff for spotlight 
 uniform float spotlightCosCutoffInner;// Cutoff for spotlight 
-uniform vec4 l_specular;            
+uniform vec4 l_specular;        // (kS) Material specular color 
 uniform vec4 l_diffuse;         // (kD) Material diffuse color 
 uniform vec4 l_ambient;         // Global ambient light 
 uniform float l_shininess;
@@ -24,7 +24,7 @@ void main() {
     // Values to be computed 
     float intensity = 0.0;
     float diffuse = 0.0;
-    float kS = 0.0;
+    float specular = 0.0;
     vec4 spec = vec4(0.0);
  
     // Normal of light direction
@@ -32,24 +32,24 @@ void main() {
     // Normal of spotlight direction
     vec3 sd = normalize(-spotlightDirection);  
  
-    // Check if pixel is inside spotlight cone 
+    // Get value of how far pixel is to center of spotlight area 
     float SdL = dot(sd,ld);
+
+    // If pixel is inside spotlight cone 
     if (SdL > spotlightCosCutoff) {
         // Grab normal
         vec3 n = normalize(vNormal);
         intensity = clamp((spotlightCosCutoff - SdL) / (spotlightCosCutoff - spotlightCosCutoffInner), 0.0, 1.0);
         //gl_FragColor = vec4(intensity, intensity, intensity, 1.0); return;
 
-        if (intensity > 0.0) {
-            // Compute diffuse intensity 
-            diffuse = l_diffuse * intensity * max(dot(n,ld), 0.0);
+        // Compute diffuse intensity 
+        diffuse = l_diffuse * intensity * max(dot(n,ld), 0.0);
 
-            // Compute specular intensity
-            vec3 eye = normalize(vEye);
-            vec3 h = normalize(ld + eye);
-            float intSpec = max(dot(h,n), 0.0);
-            kS = pow(intSpec, l_shininess) * intensity;
-        }
+        // Compute specular intensity
+        vec3 eye = normalize(vEye);
+        vec3 h = normalize(ld + eye);
+        float intSpec = max(dot(h,n), 0.0);
+        specular =  l_specular * intensity * pow(intSpec, l_shininess);
     }
 
     // Set final color 
@@ -59,5 +59,6 @@ void main() {
     else 
         textColor = color;
 
-    gl_FragColor = (diffuse + (kS * l_specular) + l_ambient) * textColor;
+    // Final color 
+    gl_FragColor = (diffuse + specular + l_ambient) * textColor;
 };

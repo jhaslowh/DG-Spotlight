@@ -74,77 +74,49 @@ int GLHandler::load(){
 	}
 
 	// ----------------------
-	// Grab shader attributes
+	// Grab shader attributes/uniforms 
 	// ----------------------
 
 	// get handle to fragment shader's vColor member
-	mColorHandle = glGetUniformLocation(program, "color");
+	grabHandleUni(mColorHandle, "color");
 	// get handle to shape's transformation matrix
-	mModelMatrixHandle = glGetUniformLocation(program, "modelm");
-	mProjMatrixHandle = glGetUniformLocation(program, "projm");
-	mViewMatrixHandle = glGetUniformLocation(program, "viewm");
-	mNormalMatrixHandle = glGetUniformLocation(program, "normm");
+	grabHandleUni(mModelMatrixHandle, "modelm");
+	grabHandleUni(mProjMatrixHandle, "projm");
+	grabHandleUni(mViewMatrixHandle, "viewm");
+	grabHandleUni(mNormalMatrixHandle, "normm");
 	// get handle to vertex shader's vPosition member
-	mPositionHandle = glGetAttribLocation(program, "position");
-	mNormalHandler = glGetAttribLocation(program, "aNormal");
+	grabHandleAtt(mPositionHandle, "position");
+	grabHandleAtt(mNormalHandler, "aNormal");
 	// Grab texture information
-	mTextureHandle = glGetUniformLocation(program, "texture");
-	mTextCordHandle = glGetAttribLocation(program, "aTexCoordinate");
-	mUseTexture = glGetUniformLocation(program, "useTexture");
+	grabHandleUni(mTextureHandle, "texture");
+	grabHandleAtt(mTextCordHandle, "aTexCoordinate");
+	grabHandleUni(mUseTexture, "useTexture");
 	// Lighting 
-	mLightPosHandle = glGetUniformLocation(program, "lightPos");
-	mSpotLightDirection = glGetUniformLocation(program, "spotlightDirection");
-	mSlotLightCosCutoff = glGetUniformLocation(program, "spotlightCosCutoff");
-	mSlotLightCosCutoffInner = glGetUniformLocation(program, "spotlightCosCutoffInner");
-	mSpecular = glGetUniformLocation(program, "l_specular");
-	mDiffuse = glGetUniformLocation(program, "l_diffuse");
-	mAmbient = glGetUniformLocation(program, "l_ambient");
-	mShininess = glGetUniformLocation(program, "l_shininess");
-	mCameraPosHandler = glGetUniformLocation(program, "cam");
+	grabHandleUni(mLightPosHandle, "lightPos");
+	grabHandleUni(mSpotLightDirection, "spotlightDirection");
+	grabHandleUni(mSlotLightCosCutoff, "spotlightCosCutoff");
+	grabHandleUni(mSlotLightCosCutoffInner, "spotlightCosCutoffInner");
 
-
-	// Error check 
-	if (mColorHandle == -1)
-		fprintf(stderr, "Error grabbing color shader handle: \n");
-	if (mProjMatrixHandle == -1)
-		fprintf(stderr, "Error grabbing world matrix shader handle: \n");
-	if (mModelMatrixHandle == -1)
-		fprintf(stderr, "Error grabbing model matrix shader handle: \n");
-	if (mViewMatrixHandle == -1)
-		fprintf(stderr, "Error grabbing camera matrix shader handle: \n");
-	if (mNormalMatrixHandle == -1)
-		fprintf(stderr, "Error grabbing normal matrix shader handle: \n");
-	if (mPositionHandle == -1)
-		fprintf(stderr, "Error grabbing position shader handle: \n");
-	if (mNormalHandler == -1)
-		fprintf(stderr, "Error grabbing normal shader handle: \n");
-	if (mTextureHandle == -1)
-		fprintf(stderr, "Error grabbing texture shader handle: \n");
-	if (mTextCordHandle == -1)
-		fprintf(stderr, "Error grabbing texture cord shader handle: \n");
-	if (mLightPosHandle == -1)
-		fprintf(stderr, "Error grabbing light position handle: \n");
-
-	if (mSpotLightDirection == -1)
-		fprintf(stderr, "Error grabbing spot light direction handle: \n");
-	if (mSlotLightCosCutoff == -1)
-		fprintf(stderr, "Error grabbing spot light cos cut off handle: \n");
-	if (mSlotLightCosCutoffInner == -1)
-		fprintf(stderr, "Error grabbing spot light cos cut off inner handle: \n");
-	if (mSpecular == -1)
-		fprintf(stderr, "Error grabbing specular handle: \n");
-	if (mDiffuse == -1)
-		fprintf(stderr, "Error grabbing diffuse handle: \n");
-	if (mAmbient == -1)
-		fprintf(stderr, "Error grabbing ambient handle: \n");
-	if (mShininess == -1)
-		fprintf(stderr, "Error grabbing shininess handle: \n");
-	if (mCameraPosHandler == -1)
-		fprintf(stderr, "Error grabbing camera handle:\n");
-	if (mUseTexture == -1)
-		fprintf(stderr, "Error grabbing mUseTexture handle:\n");
+	grabHandleUni(mSpecular, "l_specular");
+	grabHandleUni(mDiffuse, "l_diffuse");
+	grabHandleUni(mAmbient, "l_ambient");
+	grabHandleUni(mShininess, "l_shininess");
+	grabHandleUni(mCameraPosHandler, "cam");
 
 	return 1;
+}
+
+// Grab uniform handle 
+void GLHandler::grabHandleUni(int& handle, const GLchar* name){
+	handle = glGetUniformLocation(program, name);
+	if (handle == -1)
+		std::cout << "Error grabbing " << name << " handle: \n";
+}
+// Grab attribute handle 
+void GLHandler::grabHandleAtt(int& handle, const GLchar* name){
+	handle = glGetAttribLocation(program, name);
+	if (handle == -1)
+		std::cout << "Error grabbing " << name << " handle: \n";
 }
 
 // Delete MGL shader 
