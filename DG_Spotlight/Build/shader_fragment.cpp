@@ -17,7 +17,7 @@ uniform float spotlightCosCutoff;// Cutoff for spotlight
 uniform float spotlightCosCutoffInner;// Cutoff for spotlight 
 uniform vec4 l_specular;
 uniform vec4 l_diffuse;
-uniform vec4 l_ambient;
+uniform vec4 l_ambient;         // Global ambient light 
 uniform float l_shininess;
 
 void main() { 
@@ -59,5 +59,5 @@ void main() {
     else 
         textColor = color;
 
-    gl_FragColor = ((kD * l_diffuse * textColor) + kS * l_specular) + (l_ambient * textColor);
+    gl_FragColor = (kD * l_diffuse * textColor) + (kS * l_specular) + (l_ambient * textColor);
 };
