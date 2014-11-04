@@ -121,8 +121,8 @@ void Plane::draw(GLHandler mgl){
 	// Fix normal matrix 
 	mgl.fixNormalMatrix();
 
-	/// Set shader flat color 
-	mgl.setFlatColor(color);
+	// Set diffuse color 
+	glUniform4fv(mgl.mDiffuse, 1, color);
 
 	/// Set up vertex and coord buffer
 	glEnableVertexAttribArray(mgl.mPositionHandle);

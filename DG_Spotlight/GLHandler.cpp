@@ -51,6 +51,7 @@ int GLHandler::load(){
 	glGetShaderiv(fs, GL_COMPILE_STATUS, &compile_ok);
 	if (!compile_ok) {
 		fprintf(stderr, "Error in fragment shader\n");
+		glDeleteShader(vs);
 		glDeleteShader(fs);
 		return 0;
 	}
@@ -77,8 +78,6 @@ int GLHandler::load(){
 	// Grab shader attributes/uniforms 
 	// ----------------------
 
-	// get handle to fragment shader's vColor member
-	grabHandleUni(mColorHandle, "color");
 	// get handle to shape's transformation matrix
 	grabHandleUni(mModelMatrixHandle, "modelm");
 	grabHandleUni(mProjMatrixHandle, "projm");
@@ -93,9 +92,9 @@ int GLHandler::load(){
 	grabHandleUni(mUseTexture, "useTexture");
 	// Lighting 
 	grabHandleUni(mLightPosHandle, "lightPos");
-	grabHandleUni(mSpotLightDirection, "spotlightDirection");
-	grabHandleUni(mSlotLightCosCutoff, "spotlightCosCutoff");
-	grabHandleUni(mSlotLightCosCutoffInner, "spotlightCosCutoffInner");
+	grabHandleUni(mSpotLightDirection, "slDirection");
+	grabHandleUni(mSlotLightCosCutoff, "slCosCutoff");
+	grabHandleUni(mSlotLightCosCutoffInner, "slCosCutoffInner");
 
 	grabHandleUni(mSpecular, "l_specular");
 	grabHandleUni(mDiffuse, "l_diffuse");
@@ -110,13 +109,13 @@ int GLHandler::load(){
 void GLHandler::grabHandleUni(int& handle, const GLchar* name){
 	handle = glGetUniformLocation(program, name);
 	if (handle == -1)
-		std::cout << "Error grabbing " << name << " handle: \n";
+		std::cout << "Error grabbing " << name << " location\n";
 }
 // Grab attribute handle 
 void GLHandler::grabHandleAtt(int& handle, const GLchar* name){
 	handle = glGetAttribLocation(program, name);
 	if (handle == -1)
-		std::cout << "Error grabbing " << name << " handle: \n";
+		std::cout << "Error grabbing " << name << " location\n";
 }
 
 // Delete MGL shader 
@@ -150,28 +149,6 @@ void GLHandler::setupGL(){
 void GLHandler::endGL(){
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_BLEND);
-}
-
-// Set the flat color of the face 
-void GLHandler::setFlatColor(const GLfloat* mColor){
-	glUniform4fv(mColorHandle, 1, mColor);
-}
-// Set the gl flat color with 4 floats 
-void GLHandler::setFlatColor(float r, float g, float b, float a){
-	color[0] = r;
-	color[1] = g;
-	color[2] = b;
-	color[3] = a;
-	glUniform4fv(mColorHandle, 1, color);
-}
-// Set the gl flat color with 3 floats from and array and one alpha.
-// c should be {r,g,b}
-void GLHandler::setFlatColor(const GLfloat* c, float a){
-	color[0] = c[0];
-	color[1] = c[1];
-	color[2] = c[2];
-	color[3] = a;
-	glUniform4fv(mColorHandle, 1, color);
 }
 
 // Set the Projection matrix for the shader. 

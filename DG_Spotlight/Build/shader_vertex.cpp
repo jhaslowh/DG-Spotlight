@@ -13,7 +13,7 @@ uniform mat3 normm;   // Normal Matrix handle
 uniform vec3 cam;     // Camera location 
 
 // Output to fragment
-varying vec2 vTexCoordinate;  // Texture coord handle that both shaders use 
+varying vec2 vTexCoord;  // Texture coord handle that both shaders use 
 varying vec3 vNormal;         // Normal to send to texture 
 varying vec3 vEye;            // Eye vector
 varying vec3 vLightDirec;     // Light direction vector 
@@ -33,7 +33,7 @@ void main() {
     vEye = pos.xyz - cam;
 
     // Send texture cord 
-    vTexCoordinate = aTexCoordinate; 
+    vTexCoord = aTexCoordinate; 
     // Set final position 
     gl_Position = projm * viewm * modelm * position;
 };

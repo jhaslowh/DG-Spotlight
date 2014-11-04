@@ -38,15 +38,16 @@ int init_resources()
 	cube.setScale(16.0f);
 	cube.setPosition(0.0f, 8.0f, 0.0f);
 
-	cube2.setColor(1.0f, 0.0f, 0.0f);
-	cube2.setPosition(20.0f, 20.0f, 20.0f);
-
 	plane.setScale(500.0f);
 
-
+	spotlight.setCutoff(40.0f);
+	spotlight.setCutoffInner(30.0f);
+	spotlight.setLoc(glm::vec3(0.0f, 5.0f, 20.0f));
+	//spotlight.setLoc(glm::vec3(20.0f, 50.0f, 20.0f));
+	//spotlight.rotate(
 
 	camera.setLoc(glm::vec3(0, 30, 100));
-	camera.rotate(0, glm::vec3(0, 1, 0));
+	//camera.rotate(0, glm::vec3(0, 1, 0));
 
 	printf("Resources loaded\n");
 	return 1;
@@ -153,20 +154,27 @@ void onDraw()
 	mgl.setViewMatrix(camera.getViewMatrix());
 
 	// Set light settings
-	glUniform4f(mgl.mLightPosHandle, 20.0f, 50.0f, 20.0f, 1.0f);
+	/*glUniform4f(mgl.mLightPosHandle, 20.0f, 50.0f, 20.0f, 1.0f);
 	glUniform3f(mgl.mSpotLightDirection, -.4f, -1.0f, -.4f);
 	glUniform1f(mgl.mSlotLightCosCutoff, cos(30.0f * (3.14f / 180.0f)));
-	glUniform1f(mgl.mSlotLightCosCutoffInner, cos(20.0f * (3.14f / 180.0f)));
+	glUniform1f(mgl.mSlotLightCosCutoffInner, cos(20.0f * (3.14f / 180.0f)));*/
+	glUniform4f(mgl.mLightPosHandle, (*spotlight.getLoc())[0], (*spotlight.getLoc())[1], (*spotlight.getLoc())[2], 1.0f);
+	glUniform3f(mgl.mSpotLightDirection, (*spotlight.getDirec())[0], (*spotlight.getDirec())[1], (*spotlight.getDirec())[2]);
+	glUniform1f(mgl.mSlotLightCosCutoff, spotlight.getCosCutoff());
+	glUniform1f(mgl.mSlotLightCosCutoffInner, spotlight.getCosCutoffInner());
+
+	glUniform4f(mgl.mAmbient, .0f, .0f, .0f, 1.0f);
+
+	// Set material properties 
 	glUniform4f(mgl.mSpecular, 1.0f, 1.0f, 1.0f, 1.0f);
-	glUniform4f(mgl.mDiffuse, 1.0f, 1.0f, 1.0f, 1.0f);
-	glUniform4f(mgl.mAmbient, .2f, .2f, .2f, 1.0f);
 	glUniform1f(mgl.mShininess, 64.0f);
+
+	// Set camera locaton 
 	glUniform3f(mgl.mCameraPosHandler, camera.getLoc()[0], camera.getLoc()[1], camera.getLoc()[2]);
 
 	// Draw shape 
 	plane.draw(mgl);
 	cube.draw(mgl);
-	cube2.draw(mgl);
 }
  
 /** Game loop to update game state **/

@@ -1,64 +1,58 @@
 //#version 400
 
-// Inputs 
+// Inputs from program 
 uniform sampler2D texture;     // Texture handle 
 uniform bool useTexture;       // Toggle use of texture
-uniform vec4 color;            // Color handle
 
 // Input from vertex shader 
-varying vec2 vTexCoordinate;   // Texture coord handle that both shaders use 
-varying vec3 vNormal;          // Normal from vertex shader 
-varying vec3 vEye;            // Eye vector
-varying vec3 vLightDirec;     // Light direction vector 
+varying vec2 vTexCoord;   // Texture coord handle that both shaders use 
+varying vec3 vNormal;     // Normal from vertex shader 
+varying vec3 vEye;        // Eye vector
+varying vec3 vLightDirec; // Light direction vector 
 
 // Lighting 
-uniform vec3 spotlightDirection; // Direction of spotlight
-uniform float spotlightCosCutoff;// Cutoff for spotlight 
-uniform float spotlightCosCutoffInner;// Cutoff for spotlight 
-uniform vec4 l_specular;        // (kS) Material specular color 
-uniform vec4 l_diffuse;         // (kD) Material diffuse color 
+uniform vec3 slDirection;       // Direction of spotlight
+uniform float slCosCutoff;      // Cutoff for spotlight 
+uniform float slCosCutoffInner; // Cutoff for spotlight 
+
 uniform vec4 l_ambient;         // Global ambient light 
-uniform float l_shininess;
+// Material properties 
+uniform vec4 l_specular;        // Material specular color 
+uniform vec4 l_diffuse;         // Material diffuse color 
+uniform float l_shininess;      // Material shininess 
 
 void main() { 
-    // Values to be computed 
-    float intensity = 0.0;
-    float diffuse = 0.0;
-    float specular = 0.0;
-    vec4 spec = vec4(0.0);
+    float intensity = 0.0;  // Intensity of spotlight on given pixel 
+    vec4 mDiffuse;    // Material diffuse 
+    vec4 diffuse;     // Will be final diffuse color
+    vec4 specular;    // Will be final specular color 
+    float kD, kS;     // Coefficients 
+
+    // Use texture and flat color as diffuse 
+    mDiffuse = (useTexture) ? l_diffuse * texture2D(texture, vTexCoord) : l_diffuse;
  
     // Normal of light direction
     vec3 ld = normalize(vLightDirec);
     // Normal of spotlight direction
-    vec3 sd = normalize(-spotlightDirection);  
+    vec3 sd = normalize(-slDirection);  
+    vec3 n = normalize(vNormal);
+    vec3 eye = normalize(vEye);
  
+    ///== TODO for each light 
+
     // Get value of how far pixel is to center of spotlight area 
     float SdL = dot(sd,ld);
+    // Compute light intensity 
+    intensity = clamp((slCosCutoff - SdL) / (slCosCutoff - slCosCutoffInner), 0.0, 1.0);
 
-    // If pixel is inside spotlight cone 
-    if (SdL > spotlightCosCutoff) {
-        // Grab normal
-        vec3 n = normalize(vNormal);
-        intensity = clamp((spotlightCosCutoff - SdL) / (spotlightCosCutoff - spotlightCosCutoffInner), 0.0, 1.0);
-        //gl_FragColor = vec4(intensity, intensity, intensity, 1.0); return;
+    // Compute diffuse intensity [diffuse += ]
+    diffuse = mDiffuse * intensity * max(dot(n,ld), 0.0);
+    // Compute specular intensity [specular +=]
+    vec3 h = normalize(ld + eye);
+    specular = l_specular * intensity * pow(max(dot(h,n), 0.0), l_shininess);
 
-        // Compute diffuse intensity 
-        diffuse = l_diffuse * intensity * max(dot(n,ld), 0.0);
-
-        // Compute specular intensity
-        vec3 eye = normalize(vEye);
-        vec3 h = normalize(ld + eye);
-        float intSpec = max(dot(h,n), 0.0);
-        specular =  l_specular * intensity * pow(intSpec, l_shininess);
-    }
-
-    // Set final color 
-    vec4 textColor; 
-    if (useTexture)
-        textColor = color * texture2D(texture, vTexCoordinate);
-    else 
-        textColor = color;
+    ///== 
 
     // Final color 
-    gl_FragColor = (diffuse + specular + l_ambient) * textColor;
+    gl_FragColor = l_ambient + diffuse + specular;
 };

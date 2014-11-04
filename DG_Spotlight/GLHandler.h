@@ -15,9 +15,6 @@
 
 class GLHandler
 {
-	// Used to save memory 
-	GLfloat color[4];
-
 public:
 	// Shader handles 
 	GLuint vs, fs;
@@ -32,7 +29,6 @@ public:
 	GLint mLightPosHandle;			// Light Position
 	GLint mCameraPosHandler;		// Camera position 
 
-	GLint mColorHandle;				// Color
 	GLint mTextureHandle;			// Texture
 	GLint mUseTexture;
 	GLint mSpotLightDirection;
@@ -48,11 +44,13 @@ public:
 	glm::mat4 projMatrix;
 	glm::mat4 viewMatrix;
 
+private:
 	// Sent matrix's
 	glm::mat4 sentProjMatrix;
 	glm::mat4 sentViewMatrix;
 	glm::mat4 sentModelMatrix;
 
+public:
 	// Functions
 	GLHandler();
 	~GLHandler(void);
@@ -73,15 +71,6 @@ public:
 
 	// Call when done rendering 
 	void endGL();
-
-	// Set the gl flat color
-	// This should be in the form of {R,G,B,A}
-	void setFlatColor(const GLfloat* c);
-	// Set the gl flat color with 4 floats 
-	void setFlatColor(float r, float g, float b, float a);
-	// Set the gl flat color with 3 floats from and array and one alpha.
-	// c should be {r,g,b}
-	void setFlatColor(const GLfloat* c, float a);
 	
 	// Set the Projection matrix for the shader. 
 	// This is used to map the game to the screen, 

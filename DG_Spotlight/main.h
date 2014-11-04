@@ -15,10 +15,10 @@
 #include "GLHandler.h"
 #include "KeyHandler.h"
 #include "MouseHandler.h"
-#include "Sprite.h"
 #include "Cube.h"
 #include "Plane.h"
 #include "Camera3D.h"
+#include "Spotlight.h"
 
 bool WINDOW_VISIBLE = false;
 
@@ -48,9 +48,9 @@ bool showTerminal = false;
 
 // Drawing
 Cube cube;
-Cube cube2;
 Plane plane;
 Camera3D camera;
+Spotlight spotlight;
 
 // Called at the begining of the game to load resources 
 int init_resources();

@@ -22,10 +22,8 @@ void Camera3D::setLoc(glm::vec3 location){loc = location;}
 
 // Rotate the camera
 void Camera3D::rotate(float angle, glm::vec3 axis){
-	//glm::vec3 nAxis = glm::normalize(glm::vec3(rotMatrix * glm::vec4(axis, 0.0f)));
 	glm::quat rot = glm::angleAxis(angle, axis);
 	orientation = glm::cross(orientation, rot);
-	//orientation = orientation * rot;
 	fixRotationMatrix();
 }
 
@@ -52,18 +50,11 @@ void Camera3D::moveSide(float value){
 
 // Get target of camera
 glm::vec3 Camera3D::getTarget(){
-	//return loc + glm::vec3(rotationMatrix * glm::vec4(0, 0, 1, 0));
 	return glm::vec3(invRotMatrix * glm::vec4(0, 0, -1, 0));
 }
 
 // Get view matrix of camera 
 glm::mat4 Camera3D::getViewMatrix(){
-	/*return glm::lookAt(
-			loc,			   // Camera location
-			getTarget(),	   // Target look at location 
-			glm::vec3(0, 1, 0) // Camera up
-		);*/
-
 	glm::mat4 view = glm::mat4_cast(glm::conjugate(orientation));
 	view = glm::translate(view, -loc);
 	return view;

@@ -89,7 +89,7 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="MouseHandler.h" />
     <ClInclude Include="Plane.h" />
-    <ClInclude Include="Sprite.h" />
+    <ClInclude Include="Spotlight.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera3D.cpp" />
@@ -102,7 +102,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MouseHandler.cpp" />
     <ClCompile Include="Plane.cpp" />
-    <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="Spotlight.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
