@@ -1,4 +1,5 @@
 #pragma once
+#include <glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -22,6 +23,8 @@ class Spotlight
 	float cosCutoffInner;
 	// Inverse Rotation matrix
 	glm::mat4 invRotMatrix;
+	// Spotlight Color
+	GLfloat color[4];
 
 public:
 	Spotlight();
@@ -31,11 +34,18 @@ public:
 	glm::vec3* getLoc();
 	// Set location
 	void setLoc(glm::vec3 location);
+	// Move spotlight
+	void move(float dist, glm::vec3 direc);
 
 	// Set the spotlight cutoff
 	void setCutoff(float value);
 	// Get the cos cut off
 	float getCosCutoff();
+
+	// Set color for the light
+	void setColor(float r, float g, float b, float a);
+	// Get color for light
+	GLfloat* getColor();
 
 	// Set the spotlight cutoff inner
 	void setCutoffInner(float value);

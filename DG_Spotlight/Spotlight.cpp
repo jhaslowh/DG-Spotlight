@@ -8,6 +8,10 @@ Spotlight::Spotlight()
 	cutoffInner = 40.0f;
 	cosCutoff = cos(cutoff * PI_OVER_180);
 	cosCutoffInner = cos(cutoffInner * PI_OVER_180);
+	color[0] = 1.0f;
+	color[1] = 1.0f;
+	color[2] = 1.0f;
+	color[3] = 1.0f;
 	fixRotationMatrix();
 	fixDirection();
 }
@@ -35,6 +39,18 @@ void Spotlight::setCutoff(float value){
 // Get the cos cut off
 float Spotlight::getCosCutoff(){
 	return cosCutoff;
+}
+
+// Set color for the light
+void Spotlight::setColor(float r, float g, float b, float a){
+	color[0] = r;
+	color[1] = g;
+	color[2] = b;
+	color[3] = a;
+}
+// Get color for light
+GLfloat* Spotlight::getColor(){
+	return color;
 }
 
 // Set the spotlight cutoff inner
