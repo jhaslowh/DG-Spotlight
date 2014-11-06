@@ -42,9 +42,8 @@ int init_resources()
 
 	spotlight.setCutoff(40.0f);
 	spotlight.setCutoffInner(30.0f);
-	spotlight.setLoc(glm::vec3(0.0f, 5.0f, 20.0f));
-	//spotlight.setLoc(glm::vec3(20.0f, 50.0f, 20.0f));
-	//spotlight.rotate(
+	spotlight.setLoc(glm::vec3(0.0f, 50.0f, 50.0f));
+	spotlight.rotate(-45.0f, glm::vec3(1, 0, 0));
 
 	camera.setLoc(glm::vec3(0, 30, 100));
 	//camera.rotate(0, glm::vec3(0, 1, 0));
@@ -89,21 +88,21 @@ void onUpdate(){
 	// Do main updates if window is visible 
 	if (WINDOW_VISIBLE){
 
-		// Update camera controls 
+		// Move camera up down 
 		if (mMouseH.scrollUp())
-			camera.moveUpBy(deltaTime * 100.0f);
+			camera.moveWS(deltaTime * 100.0f, glm::vec4(0, 1, 0, 0));
 		if (mMouseH.scrollDown())
-			camera.moveDownBy(deltaTime * 100.0f);
-
+			camera.moveWS(deltaTime * -100.0f, glm::vec4(0, 1, 0, 0));
+		// Move camera
 		if (mKeyH.keyDown(KEY_W))
-			camera.moveForwardBy(deltaTime * -300.0f);
+			camera.moveWS(deltaTime * -300.0f, glm::vec4(0, 0, 1, 0));
 		if (mKeyH.keyDown(KEY_S))
-			camera.moveForwardBy(deltaTime * 300.0f);
+			camera.moveWS(deltaTime * 300.0f, glm::vec4(0, 0, 1, 0));
 		if (mKeyH.keyDown(KEY_D))
-			camera.moveSide(deltaTime * 300.0f);
+			camera.moveWS(deltaTime * 300.0f, glm::vec4(1, 0, 0, 0));
 		if (mKeyH.keyDown(KEY_A))
-			camera.moveSide(deltaTime * -300.0f);
-
+			camera.moveWS(deltaTime * -300.0f, glm::vec4(1, 0, 0, 0));
+		// Rotate camera
 		if (mKeyH.keyDown(KEY_Q))
 			camera.rotate(deltaTime * 60.0f, glm::vec3(0, 1, 0));
 		if (mKeyH.keyDown(KEY_E))
@@ -113,12 +112,16 @@ void onUpdate(){
 		if (mKeyH.keyDown(KEY_X))
 			camera.rotate(deltaTime * -60.0f, glm::vec3(1, 0, 0));
 
+		// Reset camera 
 		if (mKeyH.keyDown(KEY_1))
 			camera.reset();
-
-		if (mKeyH.keyPressed(KEY_2)){
+		// Reload shader 
+		if (mKeyH.keyPressed(KEY_2))
 			reloadGL = true;
-		}
+		if (mKeyH.keyPressed(KEY_3))
+			camera.centerToHorizon();
+		if (mKeyH.keyPressed(KEY_4))
+			camera.test();
 
 		cube.setRotationY(cube.getRotationY() + 1.0f);
 
