@@ -90,18 +90,18 @@ void onUpdate(){
 
 		// Move camera up down 
 		if (mMouseH.scrollUp())
-			camera.moveWS(deltaTime * 100.0f, glm::vec4(0, 1, 0, 0));
+			camera.move(deltaTime * 100.0f, glm::vec4(0, 1, 0, 0));
 		if (mMouseH.scrollDown())
-			camera.moveWS(deltaTime * -100.0f, glm::vec4(0, 1, 0, 0));
+			camera.move(deltaTime * -100.0f, glm::vec4(0, 1, 0, 0));
 		// Move camera
 		if (mKeyH.keyDown(KEY_W))
-			camera.moveWS(deltaTime * -300.0f, glm::vec4(0, 0, 1, 0));
+			camera.move(deltaTime * -300.0f, glm::vec4(0, 0, 1, 0));
 		if (mKeyH.keyDown(KEY_S))
-			camera.moveWS(deltaTime * 300.0f, glm::vec4(0, 0, 1, 0));
+			camera.move(deltaTime * 300.0f, glm::vec4(0, 0, 1, 0));
 		if (mKeyH.keyDown(KEY_D))
-			camera.moveWS(deltaTime * 300.0f, glm::vec4(1, 0, 0, 0));
+			camera.move(deltaTime * 300.0f, glm::vec4(1, 0, 0, 0));
 		if (mKeyH.keyDown(KEY_A))
-			camera.moveWS(deltaTime * -300.0f, glm::vec4(1, 0, 0, 0));
+			camera.move(deltaTime * -300.0f, glm::vec4(1, 0, 0, 0));
 		// Rotate camera
 		if (mKeyH.keyDown(KEY_Q))
 			camera.rotate(deltaTime * 60.0f, glm::vec3(0, 1, 0));
@@ -112,6 +112,15 @@ void onUpdate(){
 		if (mKeyH.keyDown(KEY_X))
 			camera.rotate(deltaTime * -60.0f, glm::vec3(1, 0, 0));
 
+		if (mMouseH.isLeftDown()){
+			if (mMouseH.getX() > (SCREEN_WIDTH * .5f)){
+				camera.rotate(deltaTime * -60.0f, glm::vec3(0, 1, 0));
+			}
+			if (mMouseH.getX() < (SCREEN_WIDTH * .5f)){
+				camera.rotate(deltaTime * 60.0f, glm::vec3(0, 1, 0));
+			}
+		}
+
 		// Reset camera 
 		if (mKeyH.keyDown(KEY_1))
 			camera.reset();
@@ -120,8 +129,6 @@ void onUpdate(){
 			reloadGL = true;
 		if (mKeyH.keyPressed(KEY_3))
 			camera.centerToHorizon();
-		if (mKeyH.keyPressed(KEY_4))
-			camera.test();
 
 		cube.setRotationY(cube.getRotationY() + 1.0f);
 

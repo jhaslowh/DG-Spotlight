@@ -23,7 +23,6 @@ void Camera3D::setLoc(glm::vec3 location){loc = location;}
 // Rotate the camera localy 
 void Camera3D::rotate(float angle, glm::vec3 axis){
 	glm::quat rot = glm::angleAxis(angle, axis);
-	//orientation = glm::cross(orientation, rot);
 	orientation = orientation * rot;
 	fixRotationMatrix();
 }
@@ -51,13 +50,7 @@ glm::mat4 Camera3D::getViewMatrix(){
 
 // Center to camera dirction to the horizon
 void Camera3D::centerToHorizon(){
-	std::cout << orientation.x << "\t" << orientation.y << "\t" << orientation.z << "\t" << orientation.w << "\n";
-	glm::quat reset = glm::quat(0, glm::vec3(-orientation.x, 0, -orientation.z));
-	orientation += reset;
-	std::cout << orientation.x << "\t" << orientation.y << "\t" << orientation.z << "\t" << orientation.w << "\n";
-	/*orientation.x = 0;
-	orientation.z = 0;
-	glm::normalize(orientation);*/
+	// TODO 
 	fixRotationMatrix();
 }
 
@@ -68,9 +61,6 @@ void Camera3D::fixRotationMatrix(){
 	invRotMatrix = glm::inverse(rotMatrix);
 
 	// Make inverse matrix for just y 
-	glm::quat ori = orientation;
-	ori.x = 0;
-	ori.z = 0;
-	rotMatrix = glm::mat4_cast(glm::conjugate(ori));
+	// TODO 
 	invYRotMatrix = glm::inverse(rotMatrix);
 }

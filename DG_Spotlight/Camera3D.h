@@ -9,6 +9,7 @@
 
 class Camera3D
 {
+	glm::quat x, y, z;
 	// Current location of the camera
 	glm::vec3 loc;
 	// Current orientation of the camera
