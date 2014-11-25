@@ -43,7 +43,7 @@ public:
 	float getCosCutoff();
 
 	// Set color for the light
-	void setColor(float r, float g, float b, float a);
+	void setColor(float r, float g, float b);
 	// Get color for light
 	GLfloat* getColor();
 

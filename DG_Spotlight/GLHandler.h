@@ -38,6 +38,7 @@ public:
 	GLint mDiffuse;
 	GLint mAmbient;
 	GLint mShininess;
+	GLint mSLColor;	
 
 	// Matrix's
 	glm::mat4 orthoMatrix;

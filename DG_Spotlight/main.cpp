@@ -44,6 +44,7 @@ int init_resources()
 	spotlight.setCutoffInner(30.0f);
 	spotlight.setLoc(glm::vec3(0.0f, 50.0f, 50.0f));
 	spotlight.rotate(-45.0f, glm::vec3(1, 0, 0));
+	//spotlight.setColor(0.5f, 1.f, 0.5f);
 
 	camera.setLoc(glm::vec3(0, 30, 100));
 	//camera.rotate(0, glm::vec3(0, 1, 0));
@@ -172,6 +173,7 @@ void onDraw()
 	glUniform3f(mgl.mSpotLightDirection, (*spotlight.getDirec())[0], (*spotlight.getDirec())[1], (*spotlight.getDirec())[2]);
 	glUniform1f(mgl.mSlotLightCosCutoff, spotlight.getCosCutoff());
 	glUniform1f(mgl.mSlotLightCosCutoffInner, spotlight.getCosCutoffInner());
+	glUniform4fv(mgl.mSLColor, 1, spotlight.getColor());
 
 	glUniform4f(mgl.mAmbient, .0f, .0f, .0f, 1.0f);
 

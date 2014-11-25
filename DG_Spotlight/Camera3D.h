@@ -17,7 +17,6 @@ class Camera3D
 	// Inverse Rotation matrix
 	glm::mat4 invRotMatrix;
 	glm::mat4 rotMatrix;
-	glm::mat4 invYRotMatrix;
 
 public:
 	Camera3D();
@@ -36,8 +35,6 @@ public:
 
 	// Move camera relative to rotation
 	void move(float dist, glm::vec4 axis);
-	// Move camera relative to world space 
-	void moveWS(float dist, glm::vec4 axis);
 
 	// Get target of camera
 	glm::vec3 getTarget();
@@ -47,6 +44,15 @@ public:
 
 	// Center to camera dirction to the horizon
 	void centerToHorizon();
+
+	// Get the axis and angle for this camera 
+	void getAxisAngle(float* angle, glm::vec3* axis);
+
+	// Returns degrees to x-axis
+	float getDegreesToX();
+
+	// Returns degrees to z-axis
+	float getDegreesToZ();
 
 private:
 	// Fix rotation matrix 

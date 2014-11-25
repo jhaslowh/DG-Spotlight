@@ -101,6 +101,7 @@ int GLHandler::load(){
 	grabHandleUni(mAmbient, "l_ambient");
 	grabHandleUni(mShininess, "l_shininess");
 	grabHandleUni(mCameraPosHandler, "cam");
+	grabHandleUni(mSLColor, "slColor");
 
 	return 1;
 }

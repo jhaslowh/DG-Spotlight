@@ -14,6 +14,7 @@ varying vec3 vLightDirec; // Light direction vector
 uniform vec3 slDirection;       // Direction of spotlight
 uniform float slCosCutoff;      // Cutoff for spotlight 
 uniform float slCosCutoffInner; // Cutoff for spotlight 
+uniform vec4 slColor;           // Spotlight color 
 
 uniform vec4 l_ambient;         // Global ambient light 
 // Material properties 
@@ -44,15 +45,16 @@ void main() {
     float SdL = dot(sd,ld);
     // Compute light intensity 
     intensity = clamp((slCosCutoff - SdL) / (slCosCutoff - slCosCutoffInner), 0.0, 1.0);
-
+    // Spotlight final color with intensity 
+    vec4 lightColor = slColor * intensity;
     // Compute diffuse intensity [diffuse += ]
-    diffuse = mDiffuse * intensity * max(dot(n,ld), 0.0);
+    diffuse = mDiffuse * lightColor * max(dot(n,ld), 0.0);
     // Compute specular intensity [specular +=]
     vec3 h = normalize(ld + eye);
-    specular = l_specular * intensity * pow(max(dot(h,n), 0.0), l_shininess);
+    specular = l_specular * lightColor * pow(max(dot(h,n), 0.0), l_shininess);
 
     ///== 
 
     // Final color 
-    gl_FragColor = l_ambient + diffuse + specular;
+    gl_FragColor = diffuse + specular + l_ambient;
 };

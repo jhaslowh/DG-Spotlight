@@ -42,11 +42,10 @@ float Spotlight::getCosCutoff(){
 }
 
 // Set color for the light
-void Spotlight::setColor(float r, float g, float b, float a){
+void Spotlight::setColor(float r, float g, float b){
 	color[0] = r;
 	color[1] = g;
 	color[2] = b;
-	color[3] = a;
 }
 // Get color for light
 GLfloat* Spotlight::getColor(){
