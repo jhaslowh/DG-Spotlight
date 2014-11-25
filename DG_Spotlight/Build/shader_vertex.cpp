@@ -17,23 +17,20 @@ varying vec2 vTexCoord;  // Texture coord handle that both shaders use
 varying vec3 vNormal;         // Normal to send to texture 
 varying vec3 vEye;            // Eye vector
 varying vec3 vLightDirec;     // Light direction vector 
-
-// Lighting 
-uniform vec4 lightPos; // Position of spotlight 
+varying vec4 vpos;
 
 void main() {       
-    // Vertex position
+    // Vertex position in world space 
     vec4 pos = modelm * position;
+    vpos = pos;
     
     // Compute normal 
     vNormal = normalize(normm * aNormal);
-    // Compute light direction 
-    vLightDirec = vec3(lightPos - pos);
     // Compute eye value 
     vEye = cam - pos.xyz;
-
     // Send texture cord 
     vTexCoord = aTexCoordinate; 
+    
     // Set final position 
     gl_Position = projm * viewm * modelm * position;
 };

@@ -9,52 +9,57 @@ varying vec2 vTexCoord;   // Texture coord handle that both shaders use
 varying vec3 vNormal;     // Normal from vertex shader 
 varying vec3 vEye;        // Eye vector
 varying vec3 vLightDirec; // Light direction vector 
+varying vec4 vpos;
 
 // Lighting 
+const int MAX_LIGHTS = 10;
+uniform vec4 lightPos; // Position of spotlight 
 uniform vec3 slDirection;       // Direction of spotlight
 uniform float slCosCutoff;      // Cutoff for spotlight 
 uniform float slCosCutoffInner; // Cutoff for spotlight 
 uniform vec4 slColor;           // Spotlight color 
+uniform int lightCount;         // Count of current lights 
 
-uniform vec4 l_ambient;         // Global ambient light 
+uniform vec4 global_ambient;  // Global ambient light 
+
 // Material properties 
-uniform vec4 l_specular;        // Material specular color 
-uniform vec4 l_diffuse;         // Material diffuse color 
-uniform float l_shininess;      // Material shininess 
+uniform vec4 m_specular;   // Material specular color 
+uniform vec4 m_diffuse;    // Material diffuse color 
+uniform float m_shininess; // Material shininess 
+uniform vec4 m_ambient;    // Material ambient
 
 void main() { 
     float intensity = 0.0;  // Intensity of spotlight on given pixel 
     vec4 mDiffuse;    // Material diffuse 
     vec4 diffuse;     // Will be final diffuse color
     vec4 specular;    // Will be final specular color 
-    float kD, kS;     // Coefficients 
 
     // Use texture and flat color as diffuse 
-    mDiffuse = (useTexture) ? l_diffuse * texture2D(texture, vTexCoord) : l_diffuse;
+    mDiffuse = (useTexture) ? m_diffuse * texture2D(texture, vTexCoord) : m_diffuse;
  
-    // Normal of light direction
-    vec3 ld = normalize(vLightDirec);
-    // Normal of spotlight direction
-    vec3 sd = normalize(-slDirection);  
-    vec3 n = normalize(vNormal);
-    vec3 eye = normalize(vEye);
+    vec3 N = normalize(vNormal);
+    vec3 E = normalize(vEye); // Eye Vector 
  
     ///== TODO for each light 
 
+    // Normal of computed light direction
+    vec3 LD = normalize(vec3(lightPos - vpos));
+    // Normal of spotlight direction
+    vec3 SD = normalize(-slDirection);  
     // Get value of how far pixel is to center of spotlight area 
-    float SdL = dot(sd,ld);
+    float SdL = dot(SD,LD);
     // Compute light intensity 
     intensity = clamp((slCosCutoff - SdL) / (slCosCutoff - slCosCutoffInner), 0.0, 1.0);
     // Spotlight final color with intensity 
     vec4 lightColor = slColor * intensity;
     // Compute diffuse intensity [diffuse += ]
-    diffuse = mDiffuse * lightColor * max(dot(n,ld), 0.0);
+    diffuse = mDiffuse * lightColor * max(dot(N,LD), 0.0);
     // Compute specular intensity [specular +=]
-    vec3 h = normalize(ld + eye);
-    specular = l_specular * lightColor * pow(max(dot(h,n), 0.0), l_shininess);
+    vec3 h = normalize(LD + E); // Half Vector 
+    specular = m_specular * lightColor * pow(max(dot(h,N), 0.0), m_shininess);
 
     ///== 
 
     // Final color 
-    gl_FragColor = diffuse + specular + l_ambient;
+    gl_FragColor = diffuse + specular + global_ambient;
 };
