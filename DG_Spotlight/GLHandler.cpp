@@ -96,12 +96,13 @@ int GLHandler::load(){
 	grabHandleUni(mSlotLightCosCutoff, "slCosCutoff");
 	grabHandleUni(mSlotLightCosCutoffInner, "slCosCutoffInner");
 
+	grabHandleUni(mAmbient, "global_ambient");
 	grabHandleUni(mSpecular, "m_specular");
 	grabHandleUni(mDiffuse, "m_diffuse");
-	grabHandleUni(mAmbient, "global_ambient");
 	grabHandleUni(mShininess, "m_shininess");
 	grabHandleUni(mCameraPosHandler, "cam");
 	grabHandleUni(mSLColor, "slColor");
+	grabHandleUni(mLightCount, "lightCount");
 
 	return 1;
 }

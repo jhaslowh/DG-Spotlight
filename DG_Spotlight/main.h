@@ -18,7 +18,7 @@
 #include "Cube.h"
 #include "Plane.h"
 #include "Camera3D.h"
-#include "Spotlight.h"
+#include "SpotlightHandler.h"
 
 bool WINDOW_VISIBLE = false;
 
@@ -50,7 +50,10 @@ bool showTerminal = false;
 Cube cube;
 Plane plane;
 Camera3D camera;
-Spotlight spotlight;
+Spotlight* spotlight2;
+SpotlightHandler slHandler;
+
+glm::quat orientation;
 
 // Called at the begining of the game to load resources 
 int init_resources();

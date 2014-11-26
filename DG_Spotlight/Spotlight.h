@@ -13,16 +13,12 @@ class Spotlight
 	// Spotlight location
 	glm::vec3 loc;
 	glm::vec3 direc;
-	// Orientation of spotlight
-	glm::quat orientation;
 	// Spotlight cutoff 
 	float cutoff;
 	float cosCutoff;
 	// Spotlight cutoff inner 
 	float cutoffInner;
 	float cosCutoffInner;
-	// Inverse Rotation matrix
-	glm::mat4 invRotMatrix;
 	// Spotlight Color
 	GLfloat color[4];
 
@@ -52,19 +48,9 @@ public:
 	// Get the cos cut off inner
 	float getCosCutoffInner();
 
-	// Set spotlight rotation
-	void setRotation(glm::quat value);
-	// Rotate the spotlight 
-	void rotate(float angle, glm::vec3 axis);
-
+	// Set direction of spotlight
+	void setDirec(glm::vec3 dir);
 	// Get direction of spotlight 
 	glm::vec3* getDirec();
-
-private:
-	// Fix rotation matrix 
-	void fixRotationMatrix();
-
-	// Fix direction
-	void fixDirection();
 };
 

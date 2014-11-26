@@ -12,12 +12,12 @@ varying vec3 vLightDirec; // Light direction vector
 varying vec4 vpos;
 
 // Lighting 
-const int MAX_LIGHTS = 10;
-uniform vec4 lightPos; // Position of spotlight 
-uniform vec3 slDirection;       // Direction of spotlight
-uniform float slCosCutoff;      // Cutoff for spotlight 
-uniform float slCosCutoffInner; // Cutoff for spotlight 
-uniform vec4 slColor;           // Spotlight color 
+//const int MAX_LIGHTS = 4;
+uniform vec4 lightPos[4];          // Position of spotlight 
+uniform vec3 slDirection[4];       // Direction of spotlight
+uniform float slCosCutoff[4];      // Cutoff for spotlight 
+uniform float slCosCutoffInner[4]; // Cutoff for spotlight 
+uniform vec4 slColor[4];           // Spotlight color 
 uniform int lightCount;         // Count of current lights 
 
 uniform vec4 global_ambient;  // Global ambient light 
@@ -40,25 +40,25 @@ void main() {
     vec3 N = normalize(vNormal);
     vec3 E = normalize(vEye); // Eye Vector 
  
-    ///== TODO for each light 
-
-    // Normal of computed light direction
-    vec3 LD = normalize(vec3(lightPos - vpos));
-    // Normal of spotlight direction
-    vec3 SD = normalize(-slDirection);  
-    // Get value of how far pixel is to center of spotlight area 
-    float SdL = dot(SD,LD);
-    // Compute light intensity 
-    intensity = clamp((slCosCutoff - SdL) / (slCosCutoff - slCosCutoffInner), 0.0, 1.0);
-    // Spotlight final color with intensity 
-    vec4 lightColor = slColor * intensity;
-    // Compute diffuse intensity [diffuse += ]
-    diffuse = mDiffuse * lightColor * max(dot(N,LD), 0.0);
-    // Compute specular intensity [specular +=]
-    vec3 h = normalize(LD + E); // Half Vector 
-    specular = m_specular * lightColor * pow(max(dot(h,N), 0.0), m_shininess);
-
-    ///== 
+    /// For each light 
+    for (int i = 0; i < lightCount; i++){
+        // Normal of computed light direction
+        vec3 LD = normalize(vec3(lightPos[i] - vpos));
+        // Normal of spotlight direction
+        vec3 SD = normalize(-slDirection[i]);  
+        // Get value of how far pixel is to center of spotlight area 
+        float SdL = dot(SD,LD);
+        // Compute light intensity 
+        intensity = clamp((slCosCutoff[i] - SdL) / (slCosCutoff[i] - slCosCutoffInner[i]), 0.0, 1.0);
+        // Spotlight final color with intensity 
+        vec4 lightColor = slColor[i] * intensity;
+        // Compute diffuse intensity [diffuse += ]
+        diffuse += mDiffuse * lightColor * max(dot(N,LD), 0.0);
+        // Compute specular intensity [specular +=]
+        vec3 h = normalize(LD + E); // Half Vector 
+        specular += m_specular * lightColor * pow(max(dot(h,N), 0.0), m_shininess);
+    }
+    ///
 
     // Final color 
     gl_FragColor = diffuse + specular + global_ambient;

@@ -12,8 +12,6 @@ Spotlight::Spotlight()
 	color[1] = 1.0f;
 	color[2] = 1.0f;
 	color[3] = 1.0f;
-	fixRotationMatrix();
-	fixDirection();
 }
 
 Spotlight::~Spotlight()
@@ -28,7 +26,6 @@ glm::vec3* Spotlight::getLoc(){
 // Set location
 void Spotlight::setLoc(glm::vec3 location){
 	loc = location;
-	fixDirection();
 }
 
 // Set the spotlight cutoff
@@ -62,33 +59,12 @@ float Spotlight::getCosCutoffInner(){
 	return cosCutoffInner;
 }
 
-// Set spotlight rotation
-void Spotlight::setRotation(glm::quat value){
-	orientation = value;
-	fixRotationMatrix();
-	fixDirection();
-}
-// Rotate the spotlight 
-void Spotlight::rotate(float angle, glm::vec3 axis){
-	glm::quat rot = glm::angleAxis(angle, axis);
-	orientation = glm::cross(orientation, rot);
-	fixRotationMatrix();
-	fixDirection();
+// Set direction of spotlight
+void Spotlight::setDirec(glm::vec3 dir){
+	direc = dir;
 }
 
 // Get direction of spotlight 
 glm::vec3* Spotlight::getDirec(){
 	return &direc;
-}
-
-// Fix rotation matrix 
-void Spotlight::fixRotationMatrix(){
-	glm::mat4 rotMatrix = glm::mat4_cast(glm::conjugate(orientation));
-	invRotMatrix = glm::inverse(rotMatrix);
-}
-
-// Fix direction
-void Spotlight::fixDirection(){
-	direc = loc + glm::vec3(invRotMatrix * glm::vec4(0, 0, -1, 0));
-	direc = glm::normalize(direc - loc);
 }

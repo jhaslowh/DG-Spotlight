@@ -32,22 +32,30 @@ int init_resources()
 	// Setup gl states 
 	mgl.setupGL();
 
-
 	// Setup objects 
 	cube.setTexture("testimage.png");
 	cube.setScale(16.0f);
 	cube.setPosition(0.0f, 8.0f, 0.0f);
 
-	plane.setScale(500.0f);
+	plane.setScale(5000.0f);
 
-	spotlight.setCutoff(40.0f);
-	spotlight.setCutoffInner(30.0f);
-	spotlight.setLoc(glm::vec3(0.0f, 50.0f, 50.0f));
-	spotlight.rotate(-45.0f, glm::vec3(1, 0, 0));
-	//spotlight.setColor(0.5f, 1.f, 0.5f);
+	// Add lights to handler 
+	Spotlight* spotlight = new Spotlight();
+	spotlight->setCutoff(40.0f);
+	spotlight->setCutoffInner(30.0f);
+	spotlight->setLoc(glm::vec3(0.0f, 50.0f, 50.0f));
+	spotlight->setDirec(glm::vec3(0.0f, -1.0f, -1.0f));
+	slHandler.addLight(spotlight);
+
+	spotlight2 = new Spotlight();
+	spotlight2->setCutoff(30.0f);
+	spotlight2->setCutoffInner(25.0f);
+	spotlight2->setLoc(glm::vec3(40.0f, 50.0f, -40.0f));
+	spotlight2->setDirec(glm::vec3(-1.0f, -1.0f, 0.0f));
+	spotlight2->setColor(0.5f, 1.f, 0.5f);
+	slHandler.addLight(spotlight2);
 
 	camera.setLoc(glm::vec3(0, 30, 100));
-	//camera.rotate(0, glm::vec3(0, 1, 0));
 
 	printf("Resources loaded\n");
 	return 1;
@@ -133,6 +141,11 @@ void onUpdate(){
 
 		cube.setRotationY(cube.getRotationY() + 1.0f);
 
+		// Rotate second spotlight 
+		orientation = orientation * glm::angleAxis(180.0f * deltaTime, glm::vec3(0.0f,0.0f,1.0f));
+		glm::vec3 direc = glm::vec3(glm::inverse(glm::mat4_cast(glm::conjugate(orientation))) * glm::vec4(1, 0, 0, 0));
+		spotlight2->setDirec(direc);
+
 		// Update input 
 		// Note: this does not actually grab the input, but
 		// runs helper code nessesary for it to work correctly. 
@@ -165,16 +178,9 @@ void onDraw()
 	mgl.setViewMatrix(camera.getViewMatrix());
 
 	// Set light settings
-	/*glUniform4f(mgl.mLightPosHandle, 20.0f, 50.0f, 20.0f, 1.0f);
-	glUniform3f(mgl.mSpotLightDirection, -.4f, -1.0f, -.4f);
-	glUniform1f(mgl.mSlotLightCosCutoff, cos(30.0f * (3.14f / 180.0f)));
-	glUniform1f(mgl.mSlotLightCosCutoffInner, cos(20.0f * (3.14f / 180.0f)));*/
-	glUniform4f(mgl.mLightPosHandle, (*spotlight.getLoc())[0], (*spotlight.getLoc())[1], (*spotlight.getLoc())[2], 1.0f);
-	glUniform3f(mgl.mSpotLightDirection, (*spotlight.getDirec())[0], (*spotlight.getDirec())[1], (*spotlight.getDirec())[2]);
-	glUniform1f(mgl.mSlotLightCosCutoff, spotlight.getCosCutoff());
-	glUniform1f(mgl.mSlotLightCosCutoffInner, spotlight.getCosCutoffInner());
-	glUniform4fv(mgl.mSLColor, 1, spotlight.getColor());
+	slHandler.sendLights(&mgl);
 
+	// Set ambient 
 	glUniform4f(mgl.mAmbient, .0f, .0f, .0f, 1.0f);
 
 	// Set material properties 

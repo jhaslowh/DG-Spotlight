@@ -26,9 +26,9 @@ public:
 	GLint mViewMatrixHandle;		// View Matrix 
 	GLint mNormalMatrixHandle;		// Normal Matrix 
 	GLint mNormalHandler;			// Normal 
-	GLint mLightPosHandle;			// Light Position
 	GLint mCameraPosHandler;		// Camera position 
 
+	GLint mLightPosHandle;			// Light Position
 	GLint mTextureHandle;			// Texture
 	GLint mUseTexture;
 	GLint mSpotLightDirection;
@@ -39,6 +39,7 @@ public:
 	GLint mAmbient;
 	GLint mShininess;
 	GLint mSLColor;	
+	GLint mLightCount;
 
 	// Matrix's
 	glm::mat4 orthoMatrix;

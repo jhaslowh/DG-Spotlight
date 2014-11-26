@@ -30,7 +30,7 @@ void main() {
     vEye = cam - pos.xyz;
     // Send texture cord 
     vTexCoord = aTexCoordinate; 
-    
+
     // Set final position 
     gl_Position = projm * viewm * modelm * position;
 };
