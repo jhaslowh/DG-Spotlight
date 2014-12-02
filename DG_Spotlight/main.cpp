@@ -191,8 +191,8 @@ void onDraw()
 	glUniform3f(mgl.mCameraPosHandler, camera.getLoc()[0], camera.getLoc()[1], camera.getLoc()[2]);
 
 	// Draw shape 
-	plane.draw(mgl);
-	cube.draw(mgl);
+	plane.draw(&mgl);
+	cube.draw(&mgl);
 }
  
 /** Game loop to update game state **/

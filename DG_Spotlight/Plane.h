@@ -53,6 +53,6 @@ public:
 	void setAlpha(const float);
 
 	// Call to draw the cube
-	void draw(GLHandler);
+	void draw(GLHandler*);
 };
 

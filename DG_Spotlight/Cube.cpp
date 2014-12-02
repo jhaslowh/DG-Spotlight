@@ -236,7 +236,7 @@ void Cube::setAlpha(const float a){
 }
 
 // Call to draw the cube
-void Cube::draw(GLHandler mgl){
+void Cube::draw(GLHandler* mgl){
 	/** Matrix transform **/
 	// Starting matrix 
 	glm::mat4 mMatrix;
@@ -251,19 +251,19 @@ void Cube::draw(GLHandler mgl){
 	// Origin
 	mMatrix = glm::translate(mMatrix, glm::vec3(-origin_x, -origin_y, 0.0f));
 	// Send the rotation matrix to the shader 
-	mgl.setModelMatrix(mMatrix);
+	mgl->setModelMatrix(mMatrix);
 
 	// Fix normal matrix 
-	mgl.fixNormalMatrix();
+	mgl->fixNormalMatrix();
 
 	/** Set diffuse color **/
-	glUniform4fv(mgl.mDiffuse, 1, color);
+	glUniform4fv(mgl->mDiffuse, 1, color);
 
 	/* Set up vertex and coord buffers **/
-	glEnableVertexAttribArray(mgl.mPositionHandle);
+	glEnableVertexAttribArray(mgl->mPositionHandle);
 	// Describe our vertices array to OpenGL 
 	glVertexAttribPointer(
-		mgl.mPositionHandle, // attribute
+		mgl->mPositionHandle, // attribute
 		3,                 // number of elements per vertex, here (x,y,z)
 		GL_FLOAT,          // the type of each element
 		GL_FALSE,          // take our values as-is
@@ -271,15 +271,15 @@ void Cube::draw(GLHandler mgl){
 		verts  // pointer to the C array
 	);
 	// Send normals to shader 
-	glEnableVertexAttribArray(mgl.mNormalHandler);
-	glVertexAttribPointer(mgl.mNormalHandler, 3, GL_FLOAT, GL_FALSE, 0, norms);
+	glEnableVertexAttribArray(mgl->mNormalHandler);
+	glVertexAttribPointer(mgl->mNormalHandler, 3, GL_FLOAT, GL_FALSE, 0, norms);
  
 	if (textureID != -1){
-		glUniform1i(mgl.mUseTexture, 1);
+		glUniform1i(mgl->mUseTexture, 1);
 		// Bind textures 
-		glEnableVertexAttribArray(mgl.mTextCordHandle);
+		glEnableVertexAttribArray(mgl->mTextCordHandle);
 		glVertexAttribPointer(
-			mgl.mTextCordHandle, 
+			mgl->mTextCordHandle,
 			2,                 // number of elements per coord, here (x,y)
 			GL_FLOAT,          // the type of each element
 			GL_FALSE,          // take our values as-is
@@ -294,16 +294,16 @@ void Cube::draw(GLHandler mgl){
 		// Bind the texture to this unit.
 		glBindTexture(GL_TEXTURE_2D, textureID);
 		// Tell the texture uniform sampler to use this texture in the shader by binding to texture unit 0.
-		glUniform1i(mgl.mTextureHandle, 0);
+		glUniform1i(mgl->mTextureHandle, 0);
 	}
 	else
-		glUniform1i(mgl.mUseTexture, 0);
+		glUniform1i(mgl->mUseTexture, 0);
 
 	// Draw the sent indicies 
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, indicies);
 
 	// Disable vertexes 
-	glDisableVertexAttribArray(mgl.mPositionHandle);
-	glDisableVertexAttribArray(mgl.mTextCordHandle);
-	glDisableVertexAttribArray(mgl.mNormalHandler);
+	glDisableVertexAttribArray(mgl->mPositionHandle);
+	glDisableVertexAttribArray(mgl->mTextCordHandle);
+	glDisableVertexAttribArray(mgl->mNormalHandler);
 }

@@ -57,6 +57,8 @@ void Camera3D::centerToHorizon(){
 // Angle is in radians 
 // http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle/
 void Camera3D::getAxisAngle(float* angle, glm::vec3* axis){
+	// TODO check if camera is upside down, if so, flip (180 along z) 
+
 	// if w>1 acos and sqrt will produce errors, this cant happen if quaternion is normalised
 	if (orientation.w > 1.0f)
 		orientation = glm::normalize(orientation);
