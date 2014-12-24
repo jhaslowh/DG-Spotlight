@@ -325,12 +325,12 @@ void createGame(){
 	}
 
 	// GLEW Debug information
-	cout << "Using GLEW Version: " << glewGetString(GLEW_VERSION) << "\n";
-	if (GLEW_VERSION_4_0) cout << "Core extensions of OpenGL 1.1 to 4.0 are available.\n";
+	cout << "GLEW Version: " << glewGetString(GLEW_VERSION) << "\n";
+	/*if (GLEW_VERSION_4_0) cout << "Core extensions of OpenGL 1.1 to 4.0 are available.\n";
 	else if (GLEW_VERSION_3_0) cout << "Core extensions of OpenGL 1.1 to 3.0 are available.\n";
 	else if (GLEW_VERSION_2_1) cout << "Core extensions of OpenGL 1.1 to 2.1 are available.\n";
 	else if (GLEW_VERSION_2_0) cout << "Core extensions of OpenGL 1.1 to 2.0 are available.\n";
-	else if (GLEW_VERSION_1_5) cout << "Core extensions of OpenGL 1.1 to 1.5 are available.\n";
+	else if (GLEW_VERSION_1_5) cout << "Core extensions of OpenGL 1.1 to 1.5 are available.\n";*/
 	// Opengl Debug Information
 	cout << "Vendor: " << glGetString(GL_VENDOR) << "\n";
 	cout << "Renderer: " << glGetString(GL_RENDERER) << "\n";
@@ -363,6 +363,7 @@ void createGame(){
 	SDL_Quit();
 
 	// TEMP TO HOLD 
+	// Used to see errors when crashing (On windows) 
 	if (!pass){
 		std::string hold;
 		cout << "Enter to continue: ";
