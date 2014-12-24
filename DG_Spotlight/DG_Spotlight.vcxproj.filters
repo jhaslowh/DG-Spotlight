@@ -51,6 +51,9 @@
     <ClInclude Include="SpotlightHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Object3D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -87,6 +90,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpotlightHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Object3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

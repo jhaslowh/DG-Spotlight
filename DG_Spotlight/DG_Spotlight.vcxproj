@@ -88,6 +88,7 @@
     <ClInclude Include="KeyHandler.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="MouseHandler.h" />
+    <ClInclude Include="Object3D.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Spotlight.h" />
     <ClInclude Include="SpotlightHandler.h" />
@@ -102,6 +103,7 @@
     <ClCompile Include="KeyHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MouseHandler.cpp" />
+    <ClCompile Include="Object3D.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Spotlight.cpp" />
     <ClCompile Include="SpotlightHandler.cpp" />
