@@ -85,15 +85,13 @@ void Camera3D::getAxisAngle(float* angle, glm::vec3* axis){
 // Returns degrees to x-axis
 float Camera3D::getDegreesToX(){
 	glm::vec3 tar = glm::vec3(invRotMatrix * glm::vec4(0, 0, -1, 0));
-	float dist = sqrt((tar[0] * tar[0]) + (tar[2] * tar[2]));
-	return atan2(tar[1], dist) * (180.0f / 3.1415f);
+	return asin(tar[1]) * (180.0f / 3.1415f);
 }
 
 // Returns degrees to z-axis
 float Camera3D::getDegreesToZ(){
 	glm::vec3 tar = glm::vec3(invRotMatrix * glm::vec4(1, 0, 0, 0));
-	float dist = sqrt((tar[0] * tar[0]) + (tar[2] * tar[2]));
-	return atan2(tar[1], dist) * (180.0f / 3.1415f);
+	return asin(tar[1]) * (180.0f / 3.1415f);
 }
 
 // Fix rotation matrix 
