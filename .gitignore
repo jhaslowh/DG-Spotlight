@@ -4,6 +4,7 @@
 
 # Game generated files #
 DG_Spotlight/Build/*.exe
+DG_Spotlight/Build/*.obj
 
 # Visual Studio Garbage #
 *.ipch

@@ -57,6 +57,10 @@ int init_resources()
 
 	camera.setLoc(glm::vec3(0, 30, 100));
 
+	// Load OBJ 
+	Object3D obj;
+	loadOBJ("../../models/teapot.obj", &obj);
+
 	printf("Resources loaded\n");
 	return 1;
 }
