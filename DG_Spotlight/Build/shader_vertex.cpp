@@ -1,4 +1,4 @@
-//#version 400  
+#version 100  
 
 // Inputs 
 in vec4 position;       // Position handle 

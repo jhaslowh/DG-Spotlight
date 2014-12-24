@@ -1,4 +1,4 @@
-//#version 400
+#version 100
 
 // Inputs from program 
 uniform sampler2D texture;     // Texture handle 
