@@ -112,4 +112,6 @@ public:
 
 	// Will check for and print out opengl error
 	void checkForGLError();
+	// Print out GLSL shader error 
+	void printGLSLError(GLint shader);
 };

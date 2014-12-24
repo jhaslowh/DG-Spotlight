@@ -34,6 +34,7 @@ int GLHandler::load(){
 	glGetShaderiv(vs, GL_COMPILE_STATUS, &compile_ok);
 	if (0 == compile_ok){
 		fprintf(stderr, "Error in vertex shader\n");
+		printGLSLError(vs);
 		glDeleteShader(vs);
 		return 0;
 	}
@@ -51,6 +52,7 @@ int GLHandler::load(){
 	glGetShaderiv(fs, GL_COMPILE_STATUS, &compile_ok);
 	if (!compile_ok) {
 		fprintf(stderr, "Error in fragment shader\n");
+		printGLSLError(fs);
 		glDeleteShader(vs);
 		glDeleteShader(fs);
 		return 0;
@@ -58,7 +60,6 @@ int GLHandler::load(){
 
 	// Make shader program
 	program = glCreateProgram();
-	std::cout << "Shader program: " << program << "\n";
 	// Give the vertex shader to our shader program
 	glAttachShader(program, vs);
 	// Give the fragment shader to out shader program 
@@ -252,6 +253,16 @@ void GLHandler::checkForGLError(){
 		}
 		glErr = glGetError();
 	}
+}
+
+// Print out GLSL shader error 
+void GLHandler::printGLSLError(GLint shader){
+	GLint infoLogLength;
+	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
+	GLchar* strInfoLog = new GLchar[infoLogLength + 1];
+	glGetShaderInfoLog(shader, infoLogLength, NULL, strInfoLog);
+	fprintf(stderr, "GLSL Compilation error: %s\n", strInfoLog);
+	delete[] strInfoLog;
 }
 
 
