@@ -10,7 +10,6 @@ DG_Spotlight/Build/*.exe
 *.tlog
 *.sdf
 *.opensdf
-*.obj
 *.log
 *.suo
 *.idb
