@@ -1,6 +1,8 @@
 DG Spotlight
 ==============================
 
+![Example](/screenshot.png)
+
 Building / Running
 --------
 
