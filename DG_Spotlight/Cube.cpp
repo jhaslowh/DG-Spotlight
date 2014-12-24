@@ -16,9 +16,10 @@ Cube::Cube()
 	origin_x = 0;
 	origin_y = 0;
 	textureID = -1;
+	cords = NULL;
 
 	// Vertexes  
-
+	verts = new GLfloat[72];
 	// Front Face
 	verts[0] = -0.5f; verts[1] = 0.5f;  verts[2] = 0.5f;  // Vertex 1
 	verts[3] = -0.5f; verts[4] = -0.5f; verts[5] = 0.5f;  // Vertex 2
@@ -56,6 +57,7 @@ Cube::Cube()
 	verts[69] = -0.5f; verts[70] = 0.5f;  verts[71] = 0.5f;  // Vertex 24
 
 	// Set indicies
+	indicies = new GLushort[36];
 	// Front Face 
 	indicies[0] = 0;
 	indicies[1] = 1;
@@ -105,6 +107,8 @@ Cube::Cube()
 	indicies[35] = 20;
 
 	// Normals 
+	norms = NULL;
+	norms = new GLfloat[72];
 	// Front Face 
 	for (int i = 0; i < 12; i += 3){
 		norms[i] = 0.f; 
@@ -146,15 +150,15 @@ Cube::Cube()
 		norms[i + 1] = 0.f;
 		norms[i + 2] = 0.f;
 	}
-
 }
 
-Cube::~Cube(void){}
+Cube::~Cube(){}
 
 // Setup the cubes texture 
 void Cube::setTexture(std::string file){
 	textureID = loadPNG(file);
 
+	cords = new GLfloat[48];
 	cords[0] = 0.0f; cords[1] = 0.0f;
 	cords[2] = 0.0f; cords[3] = 1.0f;
 	cords[4] = 1.0f; cords[5] = 1.0f;
@@ -184,126 +188,4 @@ void Cube::setTexture(std::string file){
 	cords[42] = 0.0f; cords[43] = 1.0f;
 	cords[44] = 1.0f; cords[45] = 1.0f;
 	cords[46] = 1.0f; cords[47] = 0.0f;
-}
-
-// Set the position of the cube 
-void Cube::setPosition(float x, float y, float z){
-	pos_x = x; pos_y = y; pos_z = z;
-}
-
-// Set the rotation of the cube on the x axis  
-void Cube::setRotationX(float degrees){
-	rot_x = degrees;
-}
-float Cube::getRotationX(){return rot_x;};
-
-// Set the rotation of the cube on the z axis  
-void Cube::setRotationY(float degrees){
-	rot_y = degrees;
-}
-float Cube::getRotationY(){return rot_y;};
-
-// Set the rotation of the cube on the z axis  
-void Cube::setRotationZ(float degrees){
-	rot_z = degrees;
-}
-float Cube::getRotationZ(){return rot_z;};
-
-// Set the scale of the cube
-void Cube::setScale(float value){
-	scale = value;
-}
-
-// Set the origin of the cube 
-void Cube::setOrigin(float x,float y){
-	origin_x = x;
-	origin_y = y;
-}
-
-// Set the RGB color 
-void Cube::setColor(const float r,const float g,const float b){
-	color[0] = r; color[1] = g; color[2] = b;
-}
-
-// Set the RGBA color
-void Cube::setColor(const float r,const float g,const float b,const float a){
-	color[0] = r; color[1] = g; color[2] = b; color[3] = a;
-}
-
-// Set the alpha value 
-void Cube::setAlpha(const float a){
-	color[3] = a;
-}
-
-// Call to draw the cube
-void Cube::draw(GLHandler* mgl){
-	/** Matrix transform **/
-	// Starting matrix 
-	glm::mat4 mMatrix;
-	// Translate 
-	mMatrix = glm::translate(mMatrix, glm::vec3(pos_x, pos_y, pos_z));
-	// Rotation
-	mMatrix = glm::rotate(mMatrix, rot_x, glm::vec3(1.0f, 0.0f, 0.0f));
-	mMatrix = glm::rotate(mMatrix, rot_y, glm::vec3(0.0f, 1.0f, 0.0f));
-	mMatrix = glm::rotate(mMatrix, rot_z, glm::vec3(0.0f, 0.0f, 1.0f));
-	// Scale 
-	mMatrix = glm::scale(mMatrix, glm::vec3(scale));
-	// Origin
-	mMatrix = glm::translate(mMatrix, glm::vec3(-origin_x, -origin_y, 0.0f));
-	// Send the rotation matrix to the shader 
-	mgl->setModelMatrix(mMatrix);
-
-	// Fix normal matrix 
-	mgl->fixNormalMatrix();
-
-	/** Set diffuse color **/
-	glUniform4fv(mgl->mDiffuse, 1, color);
-
-	/* Set up vertex and coord buffers **/
-	glEnableVertexAttribArray(mgl->mPositionHandle);
-	// Describe our vertices array to OpenGL 
-	glVertexAttribPointer(
-		mgl->mPositionHandle, // attribute
-		3,                 // number of elements per vertex, here (x,y,z)
-		GL_FLOAT,          // the type of each element
-		GL_FALSE,          // take our values as-is
-		0,                 // no extra data between each position
-		verts  // pointer to the C array
-	);
-	// Send normals to shader 
-	glEnableVertexAttribArray(mgl->mNormalHandler);
-	glVertexAttribPointer(mgl->mNormalHandler, 3, GL_FLOAT, GL_FALSE, 0, norms);
- 
-	if (textureID != -1){
-		glUniform1i(mgl->mUseTexture, 1);
-		// Bind textures 
-		glEnableVertexAttribArray(mgl->mTextCordHandle);
-		glVertexAttribPointer(
-			mgl->mTextCordHandle,
-			2,                 // number of elements per coord, here (x,y)
-			GL_FLOAT,          // the type of each element
-			GL_FALSE,          // take our values as-is
-			0,                 // no extra data between each position
-			cords			  // pointer to the C array
-		);
-
-		/** Bind Texture **/
-		//mgl.toggleTextures(true);
-		// Set the active texture unit to texture unit 0.
-		glActiveTexture(GL_TEXTURE0);
-		// Bind the texture to this unit.
-		glBindTexture(GL_TEXTURE_2D, textureID);
-		// Tell the texture uniform sampler to use this texture in the shader by binding to texture unit 0.
-		glUniform1i(mgl->mTextureHandle, 0);
-	}
-	else
-		glUniform1i(mgl->mUseTexture, 0);
-
-	// Draw the sent indicies 
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, indicies);
-
-	// Disable vertexes 
-	glDisableVertexAttribArray(mgl->mPositionHandle);
-	glDisableVertexAttribArray(mgl->mTextCordHandle);
-	glDisableVertexAttribArray(mgl->mNormalHandler);
 }

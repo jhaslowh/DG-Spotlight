@@ -1,4 +1,8 @@
 #pragma once
+#include <stdlib.h>
+#include <glew.h>
+
+#include "GLHandler.h"
 
 /// Author: Jonathan Haslow-Hall
 /// Basic 3D object class. 
@@ -11,6 +15,16 @@ protected:
 	float scale;
 	float origin_x;
 	float origin_y;
+
+	// Material 
+	GLint textureID;
+	GLfloat color[4];
+
+	// Object Arrays
+	GLushort* indicies;
+	GLfloat* verts;
+	GLfloat* cords;
+	GLfloat* norms;
 
 public:
 	Object3D();
@@ -33,5 +47,20 @@ public:
 	void setScale(float);
 	// Set the origin of the cube 
 	void setOrigin(float, float);
+
+	// Setup the cubes texture 
+	void setTexture(GLint id);
+
+	// Set the RGB color 
+	void setColor(const float, const float, const float);
+	// Set the RGBA color
+	void setColor(const float, const float, const float, const float);
+	// Set the alpha value 
+	void setAlpha(const float);
+
+	//// Functions
+
+	// Draw object to the scene 
+	virtual void draw(GLHandler* mgl);
 };
 
