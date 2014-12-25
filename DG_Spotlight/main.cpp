@@ -56,8 +56,8 @@ int init_resources()
 
 	// Load OBJ teacup
 	loadOBJ("../../models/teapot.obj", &model);
-	model.setScale(4.0f);
-	model.setPosition(-20.0f, 0.0f, 0.0f);
+	model.setScale(10.0f);
+	model.setPosition(-26.0f, 0.0f, 0.0f);
 
 	loadOBJ("../../models/cube.obj", &cube);
 	cube.setScale(16.0f);
