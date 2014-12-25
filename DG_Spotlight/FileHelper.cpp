@@ -162,7 +162,7 @@ void loadOBJ(std::string file, Object3D* obj){
 	vector<GLushort> fin_indicies;
 
 	// Convert faces into final values 
-	int index = 0;
+	int index = -1;
 	for (int i = 0; i < faces.size(); i++){
 		// Add vertexes
 		for (int j = 0; j < faces[i].vertex_indexes.size(); j++){
@@ -171,8 +171,6 @@ void loadOBJ(std::string file, Object3D* obj){
 			fin_verts.push_back(verts[k]);
 			fin_verts.push_back(verts[k+1]);
 			fin_verts.push_back(verts[k+2]);
-			fin_indicies.push_back(index);
-			index++;
 		}
 		// Add normals
 		for (int j = 0; j < faces[i].normal_indexes.size(); j++){
@@ -188,6 +186,22 @@ void loadOBJ(std::string file, Object3D* obj){
 			if (k >= cords.size())break;
 			fin_cords.push_back(cords[k]);
 			fin_cords.push_back(cords[k+1]);
+		}
+
+		// Support quads
+		if (faces[i].vertex_indexes.size() == 4){
+			fin_indicies.push_back(++index);
+			fin_indicies.push_back(++index);
+			fin_indicies.push_back(++index);
+			fin_indicies.push_back(index);
+			fin_indicies.push_back(++index);
+			fin_indicies.push_back(index-3);
+		}
+		// Support triangles
+		else if (faces[i].vertex_indexes.size() == 3){
+			fin_indicies.push_back(++index);
+			fin_indicies.push_back(++index);
+			fin_indicies.push_back(++index);
 		}
 	}
 
