@@ -60,6 +60,17 @@ public:
 
 	//// Functions
 
+	// Resize arrays
+	void resizeIndicies(unsigned int size);
+	void resizeVerts(unsigned int size);
+	void resizeCords(unsigned int size);
+	void resizeNorms(unsigned int size);
+	// Set values in arrays 
+	void setIndice(unsigned int index, GLushort value);
+	void setVertex(unsigned int index, GLfloat value);
+	void setCord(unsigned int index, GLfloat value);
+	void setNorm(unsigned int index, GLfloat value);
+
 	// Draw object to the scene 
 	virtual void draw(GLHandler* mgl);
 };

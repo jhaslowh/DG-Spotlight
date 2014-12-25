@@ -15,7 +15,7 @@
 #include "GLHandler.h"
 #include "KeyHandler.h"
 #include "MouseHandler.h"
-#include "Cube.h"
+#include "Object3D.h"
 #include "Plane.h"
 #include "Camera3D.h"
 #include "SpotlightHandler.h"
@@ -47,7 +47,7 @@ SDL_Thread* thread;
 bool showTerminal = false;
 
 // Drawing
-Cube cube;
+Object3D model;
 Plane plane;
 Camera3D camera;
 Spotlight* spotlight2;

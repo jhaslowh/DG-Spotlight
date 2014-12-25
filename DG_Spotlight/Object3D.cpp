@@ -8,6 +8,11 @@ Object3D::Object3D()
 	scale = 1.0f;
 	origin_x = 0.0f;
 	origin_y = 0.0f;
+	color[0] = 1.0f;
+	color[1] = 1.0f;
+	color[2] = 1.0f;
+	color[3] = 1.0f;
+	textureID = -1;
 
 	indicies = NULL;
 	verts = NULL;
@@ -81,6 +86,39 @@ void Object3D::setColor(const float r, const float g, const float b, const float
 void Object3D::setAlpha(const float a){
 	color[3] = a;
 }
+
+
+// Resize arrays
+void Object3D::resizeIndicies(unsigned int size){
+	delete[] indicies;
+	indicies = new GLushort[size];
+}
+void Object3D::resizeVerts(unsigned int size){
+	delete[] verts;
+	verts = new GLfloat[size];
+}
+void Object3D::resizeCords(unsigned int size){
+	delete[] cords;
+	cords = new GLfloat[size];
+}
+void Object3D::resizeNorms(unsigned int size){
+	delete[] norms;
+	norms = new GLfloat[size];
+}
+// Set values in arrays 
+void Object3D::setIndice(unsigned int index, GLushort value){
+	indicies[index] = value;
+}
+void Object3D::setVertex(unsigned int index, GLfloat value){
+	verts[index] = value;
+}
+void Object3D::setCord(unsigned int index, GLfloat value){
+	cords[index] = value;
+}
+void Object3D::setNorm(unsigned int index, GLfloat value){
+	norms[index] = value;
+}
+
 
 // Draw object to the scene 
 void Object3D::draw(GLHandler* mgl){

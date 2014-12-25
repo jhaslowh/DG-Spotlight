@@ -33,9 +33,6 @@ int init_resources()
 	mgl.setupGL();
 
 	// Setup objects 
-	cube.setTexture("testimage.png");
-	cube.setScale(16.0f);
-	cube.setPosition(0.0f, 8.0f, 0.0f);
 
 	plane.setScale(5000.0f);
 
@@ -57,9 +54,11 @@ int init_resources()
 
 	camera.setLoc(glm::vec3(0, 30, 100));
 
-	// Load OBJ 
-	Object3D obj;
-	loadOBJ("../../models/teapot.obj", &obj);
+	// Load OBJ teacup
+	loadOBJ("../../models/cube.obj", &model);
+	model.setScale(16.0f);
+	model.setPosition(0.0f, 8.0f, 0.0f);
+	model.setTexture(loadPNG("testimage.png"));
 
 	printf("Resources loaded\n");
 	return 1;
@@ -143,7 +142,7 @@ void onUpdate(){
 		if (mKeyH.keyPressed(KEY_3))
 			camera.centerToHorizon();
 
-		cube.setRotationY(cube.getRotationY() + 1.0f);
+		model.setRotationY(model.getRotationY() + 1.0f);
 
 		// Rotate second spotlight 
 		orientation = orientation * glm::angleAxis(180.0f * deltaTime, glm::vec3(0.0f,0.0f,1.0f));
@@ -196,7 +195,7 @@ void onDraw()
 
 	// Draw shape 
 	plane.draw(&mgl);
-	cube.draw(&mgl);
+	model.draw(&mgl);
 }
  
 /** Game loop to update game state **/

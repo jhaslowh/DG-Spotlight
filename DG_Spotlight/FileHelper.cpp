@@ -145,9 +145,15 @@ void loadOBJ(std::string file, Object3D* obj){
 	// Close file 
 	infile.close();
 
-	//  TODO create Object3D from obj 
-
-	
+	//  Put obj information into Object3D
+	obj->resizeVerts(verts.size());
+	for (int i = 0; i < verts.size(); i++) obj->setVertex(i, verts[i]);
+	obj->resizeCords(cords.size());
+	for (int i = 0; i < cords.size(); i++) obj->setCord(i, cords[i]);
+	obj->resizeNorms(norms.size());
+	for (int i = 0; i < norms.size(); i++) obj->setNorm(i, norms[i]);
+	obj->resizeIndicies(indicies.size());
+	for (int i = 0; i < indicies.size(); i++) obj->setIndice(i, indicies[i]);
 }
 
 // Convert string to double
