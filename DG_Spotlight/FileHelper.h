@@ -10,6 +10,7 @@
 
 #include "SDL/SDL_rwops.h"
 #include "Object3D.h"
+#include "Face.h"
 
 using namespace std;
 

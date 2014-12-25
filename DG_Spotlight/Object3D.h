@@ -21,6 +21,7 @@ protected:
 	GLfloat color[4];
 
 	// Object Arrays
+	GLuint index_count;
 	GLushort* indicies;
 	GLfloat* verts;
 	GLfloat* cords;

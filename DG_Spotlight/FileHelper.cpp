@@ -50,6 +50,7 @@ void loadOBJ(std::string file, Object3D* obj){
 	vector<GLfloat> norms;
 	vector<GLfloat> cords;
 	vector<GLushort> indicies;
+	vector<Face> faces;
 
 	// Read OBJ file 
 	while (!infile.eof())
@@ -89,31 +90,40 @@ void loadOBJ(std::string file, Object3D* obj){
 				// Vertex//Normal
 				// Ex: f 1//2 2//3 3//4 ... (can be 3 or more)
 
+				Face face;
+
 				// Check each token for type 
 				for (int i = 1; i < tokens.size(); i++){
 					// Check type
 					if (tokens[i].find("//") != string::npos)
 					{
 						// Type 4
-						cout << "Type4\n";
-
-						//  TODO 
+						int pos = tokens[i].find('/');
+						string vertex = tokens[i].substr(0, pos);
+						string normal = tokens[i].substr(pos + 2, tokens[i].length() - (pos - 2));
+						face.vertex_indexes.push_back(toInt(vertex));
+						face.normal_indexes.push_back(toInt(normal));
 					}
 					else if (tokens[i].find('/') != string::npos){
 						// Type 2 or 3
 						vector<string> tokens2;
 						split(tokens[i], '/', tokens2);
 
-						// Add indice 
-						indicies.push_back(toInt(tokens2[0]));
-
-						// TODO parse tokens2[1] and tokens2[2]
+						// Add indicies
+						face.vertex_indexes.push_back(toInt(tokens2[0]));
+						face.texture_indexes.push_back(toInt(tokens2[1]));
+						face.normal_indexes.push_back(toInt(tokens2[2]));
 					}
 					else {
-						// Type 1 
-						indicies.push_back(toInt(tokens[i]));
+						// Type 1
+						// Add vertex indexes 
+						face.vertex_indexes.push_back(toInt(tokens[i]));
+						face.normal_indexes.push_back(toInt(tokens[i]));
+						face.texture_indexes.push_back(toInt(tokens[i]));
 					}
 				}
+
+				faces.push_back(face);
 			}
 			else if (tokens[0] == "vn" && tokens.size() == 4){
 				// Vertex Normals 
@@ -145,15 +155,51 @@ void loadOBJ(std::string file, Object3D* obj){
 	// Close file 
 	infile.close();
 
+	// Final values
+	vector<GLfloat> fin_verts;
+	vector<GLfloat> fin_norms;
+	vector<GLfloat> fin_cords;
+	vector<GLushort> fin_indicies;
+
+	// Convert faces into final values 
+	int index = 0;
+	for (int i = 0; i < faces.size(); i++){
+		// Add vertexes
+		for (int j = 0; j < faces[i].vertex_indexes.size(); j++){
+			int k = (faces[i].vertex_indexes[j] - 1) * 3;
+			if (k >= verts.size()) break;
+			fin_verts.push_back(verts[k]);
+			fin_verts.push_back(verts[k+1]);
+			fin_verts.push_back(verts[k+2]);
+			fin_indicies.push_back(index);
+			index++;
+		}
+		// Add normals
+		for (int j = 0; j < faces[i].normal_indexes.size(); j++){
+			int k = (faces[i].normal_indexes[j] - 1) * 3;
+			if (k >= norms.size())break;
+			fin_norms.push_back(norms[k]);
+			fin_norms.push_back(norms[k+1]);
+			fin_norms.push_back(norms[k+2]);
+		}
+		// Add cords
+		for (int j = 0; j < faces[i].texture_indexes.size(); j++){
+			int k = (faces[i].texture_indexes[j]-1) * 2;
+			if (k >= cords.size())break;
+			fin_cords.push_back(cords[k]);
+			fin_cords.push_back(cords[k+1]);
+		}
+	}
+
 	//  Put obj information into Object3D
-	obj->resizeVerts(verts.size());
-	for (int i = 0; i < verts.size(); i++) obj->setVertex(i, verts[i]);
-	obj->resizeCords(cords.size());
-	for (int i = 0; i < cords.size(); i++) obj->setCord(i, cords[i]);
-	obj->resizeNorms(norms.size());
-	for (int i = 0; i < norms.size(); i++) obj->setNorm(i, norms[i]);
-	obj->resizeIndicies(indicies.size());
-	for (int i = 0; i < indicies.size(); i++) obj->setIndice(i, indicies[i]);
+	obj->resizeVerts(fin_verts.size());
+	for (int i = 0; i < fin_verts.size(); i++) obj->setVertex(i, fin_verts[i]);
+	obj->resizeCords(fin_cords.size());
+	for (int i = 0; i < fin_cords.size(); i++) obj->setCord(i, fin_cords[i]);
+	obj->resizeNorms(fin_norms.size());
+	for (int i = 0; i < fin_norms.size(); i++) obj->setNorm(i, fin_norms[i]);
+	obj->resizeIndicies(fin_indicies.size());
+	for (int i = 0; i < fin_indicies.size(); i++) obj->setIndice(i, fin_indicies[i]);
 }
 
 // Convert string to double

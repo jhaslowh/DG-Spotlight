@@ -48,6 +48,7 @@ bool showTerminal = false;
 
 // Drawing
 Object3D model;
+Object3D cube;
 Plane plane;
 Camera3D camera;
 Spotlight* spotlight2;

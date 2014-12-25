@@ -13,6 +13,7 @@ Object3D::Object3D()
 	color[2] = 1.0f;
 	color[3] = 1.0f;
 	textureID = -1;
+	index_count = 0;
 
 	indicies = NULL;
 	verts = NULL;
@@ -90,6 +91,7 @@ void Object3D::setAlpha(const float a){
 
 // Resize arrays
 void Object3D::resizeIndicies(unsigned int size){
+	index_count = size;
 	delete[] indicies;
 	indicies = new GLushort[size];
 }
@@ -164,7 +166,7 @@ void Object3D::draw(GLHandler* mgl){
 		glVertexAttribPointer(mgl->mNormalHandler, 3, GL_FLOAT, GL_FALSE, 0, norms);
 	}
 
-	if (textureID != -1){
+	if (textureID != -1 && cords != NULL){
 		glUniform1i(mgl->mUseTexture, 1);
 		// Bind textures 
 		glEnableVertexAttribArray(mgl->mTextCordHandle);
@@ -191,7 +193,7 @@ void Object3D::draw(GLHandler* mgl){
 
 	// Draw the sent indicies 
 	if (indicies != NULL)
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, indicies);
+		glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_SHORT, indicies);
 	else std::cout << "ERROR: Trying to render object with no indicies\n";
 
 	// Disable vertexes 
