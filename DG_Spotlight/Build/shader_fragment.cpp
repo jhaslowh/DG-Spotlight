@@ -1,4 +1,5 @@
 #version 100
+precision highp float;
 
 // Inputs from program 
 uniform sampler2D texture;     // Texture handle 

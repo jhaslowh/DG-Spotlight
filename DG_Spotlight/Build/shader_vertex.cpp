@@ -1,4 +1,5 @@
 #version 100  
+precision highp float;
 
 // Inputs 
 in vec4 position;       // Position handle 
