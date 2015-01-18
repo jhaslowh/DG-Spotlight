@@ -4,7 +4,6 @@ GLHandler::GLHandler(){
 	program = 0;
 }
 GLHandler::~GLHandler(){
-	//std::cout << "TODO We should not see this\n";
 }
 
 /**
