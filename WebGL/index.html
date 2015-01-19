@@ -1,0 +1,461 @@
+<html>
+
+<head>
+<style>
+    body {
+        overflow-x:hidden;
+        background-color: #ffffff;
+        border: 0px;
+        margin: 0px;
+        padding: 0px;
+    }
+    #controls
+    {
+        padding-top: 20px;
+        padding-left: 20px;
+        left: 0;
+        top: 0px;
+        position: absolute;
+        width: 100%;
+    }
+    label
+    {
+        color:#ffffff
+    }
+</style>
+<title>DG-Spotlight</title>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<script type="text/javascript" src="gl-matrix-min.js"></script>
+<script type="text/javascript" src="primatives.js"></script>
+<script type="text/javascript" src="io.js"></script>
+
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<!--<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>-->
+
+<!-- Fragment Shader -->
+<script id="shader-fs" type="x-shader/x-fragment">
+#version 100
+precision highp float;
+
+// Inputs from program 
+uniform sampler2D texture;     // Texture handle 
+uniform bool useTexture;       // Toggle use of texture
+
+// Input from vertex shader 
+varying vec2 vTexCoord;   // Texture coord handle that both shaders use 
+varying vec3 vNormal;     // Normal from vertex shader 
+varying vec3 vEye;        // Eye vector
+varying vec3 vLightDirec; // Light direction vector 
+varying vec4 vpos;
+
+// Lighting 
+uniform vec4 lightPos;          // Position of spotlight 
+uniform vec3 slDirection;       // Direction of spotlight
+uniform float slCosCutoff;      // Cutoff for spotlight 
+uniform float slCosCutoffInner; // Cutoff for spotlight 
+uniform vec4 slColor;           // Spotlight color 
+
+uniform vec4 global_ambient;  // Global ambient light 
+
+// Material properties 
+uniform vec4 m_specular;   // Material specular color 
+uniform vec4 m_diffuse;    // Material diffuse color 
+uniform float m_shininess; // Material shininess 
+uniform vec4 m_ambient;    // Material ambient
+
+void main() { 
+    float intensity = 0.0;  // Intensity of spotlight on given pixel 
+    vec4 mDiffuse;    // Material diffuse 
+    vec4 diffuse;     // Will be final diffuse color
+    vec4 specular;    // Will be final specular color 
+
+    // Use texture and flat color as diffuse 
+    mDiffuse = (useTexture) ? m_diffuse * texture2D(texture, vTexCoord) : m_diffuse;
+ 
+    vec3 N = normalize(vNormal);
+    vec3 E = normalize(vEye); // Eye Vector 
+ 
+    // Normal of computed light direction
+    vec3 LD = normalize(vec3(lightPos - vpos));
+    // Normal of spotlight direction
+    vec3 SD = normalize(-slDirection);  
+    // Get value of how far pixel is to center of spotlight area 
+    float SdL = dot(SD,LD);
+    // Compute light intensity 
+    intensity = clamp((slCosCutoff - SdL) / (slCosCutoff - slCosCutoffInner), 0.0, 1.0);
+    // Spotlight final color with intensity 
+    vec4 lightColor = slColor * intensity;
+    // Compute diffuse intensity 
+    diffuse = mDiffuse * lightColor * max(dot(N,LD), 0.0);
+    // Compute specular intensity 
+    vec3 h = normalize(LD + E); // Half Vector 
+    specular = m_specular * lightColor * pow(max(dot(h,N), 0.0), m_shininess);
+
+    // Final color 
+    gl_FragColor = diffuse + specular + global_ambient;
+}
+</script>
+
+<!-- Vertex Shader -->
+<script id="shader-vs" type="x-shader/x-vertex">
+#version 100  
+precision highp float;
+
+// Inputs 
+attribute vec4 position; // Position handle 
+attribute vec3 aNormal;  // Normal handle 
+attribute vec2 aTexCoordinate; // Texture coord handle 
+uniform vec3 cam;       // Camera location 
+
+// Matrix's 
+uniform mat4 modelm;  // Model Matrix handle
+uniform mat4 viewm;   // View Matrix handle
+uniform mat4 projm;   // Projection Matrix handle
+uniform mat3 normm;   // Normal Matrix handle
+
+// Output to fragment
+varying vec2 vTexCoord;  // Texture coord handle that both shaders use 
+varying vec3 vNormal;    // Normal to send to texture 
+varying vec3 vEye;       // Eye vector
+varying vec3 vLightDirec;  // Light direction vector 
+varying vec4 vpos;
+
+void main() {       
+    // Vertex position in world space 
+    vec4 pos = modelm * position;
+    vpos = pos;
+    
+    // Compute normal 
+    vNormal = normalize(normm * aNormal);
+    // Compute eye value 
+    vEye = cam - pos.xyz;
+    // Send texture cord 
+    vTexCoord = aTexCoordinate; 
+
+    // Set final position 
+    gl_Position = projm * viewm * modelm * position;
+}
+</script>
+
+<script type="text/javascript">
+
+// Compatability 
+window.requestAnimFrame = (function(callback) {
+    return window.requestAnimationFrame || 
+           window.webkitRequestAnimationFrame || 
+           window.mozRequestAnimationFrame || 
+           window.oRequestAnimationFrame || 
+           window.msRequestAnimationFrame ||
+        function(callback) {
+          window.setTimeout(callback, 1000 / 60);
+        };
+      })();
+
+    // Canvas reference 
+    var canvas;
+    var requestId;
+    // GL Context reference 
+    var gl;
+    // GL Shader program 
+    var shaderProgram;
+    // Matrix's 
+    var mMatrix = mat4.create();
+    var vMatrix = mat4.create();
+    var pMatrix = mat4.create();
+    var nMatrix = mat3.create();
+    // Camera 
+    var camZoom = 100;
+    var camAngle = 90;
+    var DEGREES_TO_RADS = Math.PI / 180.0;
+    var cam = [0,30,100];
+    var tar = [0,0,0];
+    var manual = false;
+    // Spotlight
+    var slColor = [1,1,1];
+    var slCutoff = 40.0;
+    var slCutoffInner = 35;
+    var slLoc = [20.0, 50.0, 20.0]
+    var slTar = [0,0,0]
+
+    // Objects to draw 
+    var cube1 = new Cube();
+    var cubeRot = .05;
+    var plane1 = new Plane();
+
+    function init() {
+        initGL();
+        initIO();
+        initShaders();
+
+        cube1.init(gl);
+        cube1.location(0,8,0);
+        cube1.setScale(16.0);
+
+        plane1.init(gl);
+        plane1.setScale(500.0);
+    }
+
+    // Setup OpenGL
+    function initGL() {
+        try {
+            gl = canvas.getContext("experimental-webgl");
+        } catch (e) {
+            console.log("Could not initialise WebGL");
+        }
+        if (!gl) {
+            console.log("Could not initialise WebGL");
+            return;
+        }
+
+        gl.clearColor(0.25, 0.25, 0.3, 1.0);
+        gl.enable(gl.CULL_FACE);
+        gl.cullFace(gl.BACK);
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        gl.enable(gl.DEPTH_TEST);
+        resize();
+    }
+
+    function initShaders() {
+        // Compile Shaders 
+        var fragmentShader = getShader(gl, "shader-fs");
+        var vertexShader = getShader(gl, "shader-vs");
+
+        // Create shader program 
+        shaderProgram = gl.createProgram();
+        gl.attachShader(shaderProgram, vertexShader);
+        gl.attachShader(shaderProgram, fragmentShader);
+        gl.linkProgram(shaderProgram);
+
+        if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+            alert("Could not initialise shaders");
+        }
+
+        gl.useProgram(shaderProgram);
+
+        // Grab uniforms and attributes 
+        // get handle to shape's transformation matrix
+        shaderProgram.mModelMatrixHandle = grabHandleUni("modelm");
+        shaderProgram.mProjMatrixHandle = grabHandleUni("projm");
+        shaderProgram.mViewMatrixHandle = grabHandleUni("viewm");
+        shaderProgram.mNormalMatrixHandle = grabHandleUni("normm");
+        // get handle to vertex shader's vPosition member
+        shaderProgram.mPositionHandle= grabHandleAtt("position");
+        shaderProgram.mNormalHandler = grabHandleAtt("aNormal");
+        // Grab texture information
+        shaderProgram.mTextureHandle = grabHandleUni("texture");
+        shaderProgram.mTextCordHandle = grabHandleAtt("aTexCoordinate");
+        shaderProgram.mUseTexture = grabHandleUni("useTexture");
+        // Lighting 
+        shaderProgram.mLightPosHandle = grabHandleUni("lightPos");
+        shaderProgram.mSpotLightDirection = grabHandleUni("slDirection");
+        shaderProgram.mSlotLightCosCutoff = grabHandleUni("slCosCutoff");
+        shaderProgram.mSlotLightCosCutoffInner = grabHandleUni("slCosCutoffInner");
+
+        shaderProgram.mAmbient = grabHandleUni("global_ambient");
+        shaderProgram.mSpecular = grabHandleUni("m_specular");
+        shaderProgram.mDiffuse = grabHandleUni("m_diffuse");
+        shaderProgram.mShininess = grabHandleUni("m_shininess");
+        shaderProgram.mCameraPosHandler = grabHandleUni("cam");
+        shaderProgram.mSLColor = grabHandleUni("slColor");
+    }
+
+    function grabHandleUni(name){
+        var handle = gl.getUniformLocation(shaderProgram, name)
+        if (handle == null) console.log("Error grabing uniform handle " + name);
+        return handle;
+    }
+
+    function grabHandleAtt(name){
+        var handle = gl.getAttribLocation(shaderProgram, name)
+        if (handle == null) console.log("Error grabing attribute handle " + name);
+        return handle;
+    }
+
+    // Get shader by id 
+    function getShader(gl, id) {
+        // Try to grab shader by id 
+        var shaderScript = document.getElementById(id);
+        if (!shaderScript) {
+            return null;
+        }
+
+        // Get shader text 
+        var str = "";
+        var k = shaderScript.firstChild;
+        while (k) {
+            if (k.nodeType == 3) {
+                str += k.textContent;
+            }
+            k = k.nextSibling;
+        }
+
+        var shader;
+        if (shaderScript.type == "x-shader/x-fragment") {
+            shader = gl.createShader(gl.FRAGMENT_SHADER);
+        } else if (shaderScript.type == "x-shader/x-vertex") {
+            shader = gl.createShader(gl.VERTEX_SHADER);
+        } else {
+            return null;
+        }
+
+        // Compile shader into id 
+        gl.shaderSource(shader, str);
+        gl.compileShader(shader);
+
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            console.log(gl.getShaderInfoLog(shader));
+            return null;
+        }
+
+        return shader;
+    }
+
+    function update(){
+        // Update Camera 
+        if (keyboard[KEY_A]){
+            camAngle += 2.8;
+            manual = true;
+        }
+        if (keyboard[KEY_D]){
+            camAngle -= 2.8;
+            manual = true;
+        }
+        if (!manual) camAngle += .2;
+        camAngle = camAngle % 360;
+
+        cam[0] = Math.cos(camAngle * DEGREES_TO_RADS) * camZoom;
+        cam[2] = Math.sin(camAngle * DEGREES_TO_RADS) * camZoom;
+
+        // Get slider values
+        slCutoff = document.getElementById("cutoff").value;
+        slCutoffInner = slCutoff - 1;
+        slColor[0] = document.getElementById("rcolor").value / 1000.0;
+        slColor[1] = document.getElementById("gcolor").value / 1000.0;
+        slColor[2] = document.getElementById("bcolor").value / 1000.0;
+        cube1.setScale(document.getElementById("bscale").value);
+        cube1.location(0,document.getElementById("bscale").value/2.0,0);
+        cubeRot = document.getElementById("brot").value / 100.0;
+
+        // Update cube rotation 
+        cube1.rotation[1] += cubeRot;
+
+        updateIO();
+    }
+
+    function drawScene() {
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+        // Set perspective matrix 
+        gl.uniformMatrix4fv(shaderProgram.mProjMatrixHandle, false, pMatrix);
+        // Set view matrix
+        mat4.identity(vMatrix);
+        mat4.lookAt(vMatrix, cam, tar, [0,1,0]);
+        gl.uniformMatrix4fv(shaderProgram.mViewMatrixHandle, false, vMatrix);
+
+        // Set ambient 
+        gl.uniform4f(shaderProgram.mAmbient, 0.0, 0.0, 0.0, 1.0);
+
+        // Set material properties 
+        gl.uniform4f(shaderProgram.mSpecular, 1.0, 1.0, 1.0, 1.0);
+        gl.uniform1f(shaderProgram.mShininess, 64.0);
+
+        // Set camera locaton 
+        gl.uniform3f(shaderProgram.mCameraPosHandler, cam[0],cam[1],cam[2]);
+
+        // Make spotlight 
+        gl.uniform4f(shaderProgram.mLightPosHandle, slLoc[0],slLoc[1],slLoc[2], 1.0);
+        gl.uniform3f(shaderProgram.mSpotLightDirection, slTar[0]-slLoc[0],slTar[1]-slLoc[1],slTar[2]-slLoc[2]);
+        gl.uniform1f(shaderProgram.mSlotLightCosCutoff, Math.cos(slCutoff * (3.1415/180.0)));
+        gl.uniform1f(shaderProgram.mSlotLightCosCutoffInner, Math.cos(slCutoffInner * (3.1415/180.0)));
+        gl.uniform4f(shaderProgram.mSLColor, slColor[0],slColor[1],slColor[2],1.0);
+
+        // ----- 
+
+        plane1.draw(gl);
+        cube1.draw(gl);
+    }
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        gl.viewportWidth = canvas.width;
+        gl.viewportHeight = canvas.height;
+        gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+        mat4.perspective(pMatrix, 45, gl.viewportWidth / gl.viewportHeight, 0.1, 1000.0);
+    }
+
+    function webGLStart() {
+        canvas = document.getElementById("glview");
+        init();
+
+        // Set Listeners 
+        canvas.addEventListener('webglcontextlost', handleContextLost, false);
+        canvas.addEventListener('webglcontextrestored', handleContextRestored, false);
+        window.addEventListener('resize', resize, false);
+        window.addEventListener('orientationchange', resize, false);
+
+        // Content Loop 
+        function loop() {
+          drawScene();
+          update();
+
+          // Request new loop 
+          requestId = window.requestAnimFrame(function() {
+            loop();
+          });
+        };
+        loop();
+
+        // Function to handle content lost 
+        function handleContextLost(e) {
+            e.preventDefault();
+            if (requestId !== undefined) {
+                window.cancelAnimFrame(requestId);
+                requestId = undefined;
+            }
+        }
+
+        // Function to handle content restored 
+        function handleContextRestored() {
+            init();
+            loop();
+        }
+    }
+</script>
+</head>
+
+<body onload="webGLStart();">
+    <canvas id="glview" style="border: none;" width ="700" height="500">
+    </canvas>
+    <div id="controls">
+    <form>
+        <label for="cutoff">Spotlight Cutoff</label>
+        </br>
+        <input type="range" name="cutoff" id="cutoff" value="40" min="2" max="89">
+        </br>
+        <hr align="left" width="200px" color="#777" >
+        <label for="scolor">Spotlight Color</label>
+        </br>
+        <label>Red: </label>
+        <input type="range" name="rcolor" id="rcolor" value="1000" min="0" max="1000">
+        </br>
+        <label>Green: </label>
+        <input type="range" name="gcolor" id="gcolor" value="1000" min="0" max="1000">
+        </br>
+        <label>Blue: </label>
+        <input type="range" name="bcolor" id="bcolor" value="1000" min="0" max="1000">
+        </br>
+        <hr align="left" width="200px" color="#777" >
+        <label for="bscale">Cube Scale</label>
+        </br>
+        <input type="range" name="bscale" id="bscale" value="16" min="5" max="50">
+        </br>
+        <hr align="left" width="200px" color="#777" >
+        <label for="brot">Cube Rotation</label>
+        </br>
+        <input type="range" name="brot" id="brot" value="5" min="0" max="10">
+    </form>
+    </div>
+</body>
+</html>
