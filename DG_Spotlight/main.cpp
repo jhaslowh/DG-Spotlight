@@ -320,7 +320,7 @@ void createGame(){
 	    cout << "ERROR: " << SDL_GetError() << "\n";
 
 	// Create Window 
-	window = SDL_CreateWindow("GLSL Example", 40, 40, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
+	window = SDL_CreateWindow("DG-Spotlight", 40, 40, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
 	// Create the window context 
 	SDL_GLContext context = SDL_GL_CreateContext(window);
 

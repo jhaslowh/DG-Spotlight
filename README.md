@@ -1,7 +1,8 @@
 DG Spotlight
 ==============================
+DG-Spotlight is a small project I created to learn more about GLSL lighting. You can either run the VS project or the WebGL one. The WebGL project does not support OBJ files or multiple spotlights, but does allow you to change the spotlight properties.  
 
-![Example](/screenshot.png)
+![Example](/sl-screenshot.png)
 
 Building / Running
 --------
