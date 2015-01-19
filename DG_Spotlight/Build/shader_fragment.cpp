@@ -63,4 +63,4 @@ void main() {
 
     // Final color 
     gl_FragColor = diffuse + specular + global_ambient;
-};
+}

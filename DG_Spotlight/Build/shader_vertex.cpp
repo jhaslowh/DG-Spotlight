@@ -34,4 +34,4 @@ void main() {
 
     // Set final position 
     gl_Position = projm * viewm * modelm * position;
-};
+}
